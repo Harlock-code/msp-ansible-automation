@@ -1,0 +1,7 @@
+---
+- name: Deploy reusable Docker stack
+  hosts: all
+  become: true
+
+  roles:
+    - docker_stack

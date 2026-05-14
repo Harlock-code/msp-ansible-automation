@@ -1,0 +1,8 @@
+---
+- name: Check Docker version
+  command: docker --version
+  changed_when: false
+
+- name: Check running containers
+  command: docker ps
+  changed_when: false

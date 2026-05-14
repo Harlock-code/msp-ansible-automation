@@ -1,0 +1,27 @@
+---
+- name: Update Docker Hosts
+  hosts: docker
+  become: true
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Upgrade system packages
+      apt:
+        upgrade: dist
+
+    - name: Install base admin packages
+      apt:
+        name:
+          - curl
+          - git
+          - htop
+          - vim
+          - net-tools
+          - unzip
+          - ca-certificates
+          - gnupg
+          - lsb-release
+        state: present

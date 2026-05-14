@@ -1,0 +1,9 @@
+---
+- name: MSP Infrastructure Baseline
+  hosts: docker
+  become: true
+
+  roles:
+    - common
+    - security
+    - docker

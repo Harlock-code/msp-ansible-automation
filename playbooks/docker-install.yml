@@ -1,0 +1,7 @@
+---
+- name: Install Docker Engine
+  hosts: docker_test
+  become: true
+
+  roles:
+    - docker_engine

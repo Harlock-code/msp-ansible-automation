@@ -1,0 +1,17 @@
+---
+- name: Check Docker Hosts
+  hosts: docker
+  become: true
+
+  tasks:
+    - name: Check hostname
+      command: hostname
+      changed_when: false
+
+    - name: Check Docker version
+      command: docker --version
+      changed_when: false
+
+    - name: Check running containers
+      command: docker ps --format "table {{ '{{' }}.Names{{ '}}' }}\t{{ '{{' }}.Status{{ '}}' }}"
+      changed_when: false

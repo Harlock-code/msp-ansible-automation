@@ -1,0 +1,26 @@
+---
+- name: Install git
+  apt:
+    name: git
+    state: present
+    update_cache: yes
+
+- name: Create repos directory
+  file:
+    path: /opt/repos
+    state: directory
+    mode: '0755'
+
+- name: Clone docker apps repository
+  git:
+    repo: "https://github.com/Harlock-code/msp-docker-apps.git"
+    dest: /opt/repos/msp-docker-apps
+    version: main
+    force: yes
+    accept_hostkey: yes
+
+- name: Deploy nginx test from GitHub repo
+  shell: |
+    docker compose up -d
+  args:
+    chdir: /opt/repos/msp-docker-apps/nginx-test

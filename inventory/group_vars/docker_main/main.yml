@@ -1,0 +1,8 @@
+---
+repo_name: msp-docker-infrastructure
+repo_url: https://github.com/Harlock-code/msp-docker-infraestructure.git
+
+docker_stacks:
+  - nginx-proxy-manager
+  - homepage
+  - uptime-kuma
