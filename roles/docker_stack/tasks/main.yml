@@ -5,25 +5,26 @@
     state: directory
     mode: '0755'
 
-- name: Clone applications repository
+- name: Clone repositories
   git:
-    repo: "{{ repo_url }}"
-    dest: "/opt/repos/{{ repo_name }}"
+    repo: "{{ item.repo_url }}"
+    dest: "/opt/repos/{{ item.repo_name }}"
     version: main
     force: yes
+  loop: "{{ deploy_repositories }}"
 
 - name: Copy env example to .env
   copy:
-    src: "/opt/repos/{{ repo_name }}/{{ item }}/.env.example"
-    dest: "/opt/repos/{{ repo_name }}/{{ item }}/.env"
+    src: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env.example"
+    dest: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env"
     remote_src: yes
     force: no
-  loop: "{{ docker_stacks }}"
+  loop: "{{ deploy_repositories | subelements('docker_stacks') }}"
   ignore_errors: yes
 
 - name: Deploy Docker stacks
   shell: |
     docker compose up -d
   args:
-    chdir: "/opt/repos/{{ repo_name }}/{{ item }}"
-  loop: "{{ docker_stacks }}"
+    chdir: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}"
+  loop: "{{ deploy_repositories | subelements('docker_stacks') }}"
