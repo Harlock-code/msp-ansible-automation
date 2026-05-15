@@ -13,20 +13,29 @@
     - /opt/data/monitoring/loki/data
     - /opt/data/monitoring/promtail
 
-- name: Copy Prometheus config
-  copy:
-    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/prometheus/prometheus.yml"
+- name: Render Prometheus config
+  ansible.builtin.template:
+    src: prometheus.yml.j2
     dest: /opt/data/monitoring/prometheus/prometheus.yml
+    owner: javi
+    group: javi
+    mode: '0644'
 
-- name: Copy Loki config
-  copy:
-    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/loki/loki-config.yml"
+- name: Render Loki config
+  ansible.builtin.template:
+    src: loki-config.yml.j2
     dest: /opt/data/monitoring/loki/loki-config.yml
+    owner: javi
+    group: javi
+    mode: '0644'
 
-- name: Copy Promtail config
-  copy:
-    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/promtail/promtail-config.yml"
+- name: Render Promtail config
+  ansible.builtin.template:
+    src: promtail-config.yml.j2
     dest: /opt/data/monitoring/promtail/promtail-config.yml
+    owner: javi
+    group: javi
+    mode: '0644'
 
 - name: Set Grafana permissions
   file:
@@ -48,3 +57,12 @@
     owner: nobody
     group: nogroup
     recurse: yes
+
+- name: Render Homepage env file
+  ansible.builtin.template:
+    src: homepage.env.j2
+    dest: /opt/repos/msp-docker-infrastructure/homepage/.env
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"

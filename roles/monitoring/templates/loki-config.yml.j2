@@ -1,0 +1,25 @@
+auth_enabled: {{ loki_auth_enabled | default(false) | lower }}
+
+server:
+  http_listen_port: {{ loki_port | default(3100) }}
+
+common:
+  path_prefix: {{ loki_path_prefix | default('/loki') }}
+  storage:
+    filesystem:
+      chunks_directory: {{ loki_chunks_directory | default('/loki/chunks') }}
+      rules_directory: {{ loki_rules_directory | default('/loki/rules') }}
+  replication_factor: {{ loki_replication_factor | default(1) }}
+  ring:
+    kvstore:
+      store: {{ loki_ring_store | default('inmemory') }}
+
+schema_config:
+  configs:
+    - from: {{ loki_schema_from | default('2024-01-01') }}
+      store: {{ loki_schema_store | default('tsdb') }}
+      object_store: {{ loki_object_store | default('filesystem') }}
+      schema: {{ loki_schema_version | default('v13') }}
+      index:
+        prefix: {{ loki_index_prefix | default('index_') }}
+        period: {{ loki_index_period | default('24h') }}

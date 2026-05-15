@@ -1,6 +1,6 @@
 ---
 deploy_repositories:
-  - repo_name: msp-docker-apps
-    repo_url: https://github.com/Harlock-code/msp-docker-apps.git
+  - repo_name: "{{ repositories.apps.name }}"
+    repo_url: "{{ repositories.apps.url }}"
     docker_stacks:
       - vaultwarden

@@ -1,7 +1,7 @@
 ---
 deploy_repositories:
-  - repo_name: msp-docker-infrastructure
-    repo_url: https://github.com/Harlock-code/msp-docker-infraestructure.git
+  - repo_name: "{{ repositories.infrastructure.name }}"
+    repo_url: "{{ repositories.infrastructure.url }}"
     docker_stacks:
       - nginx-proxy-manager
       - homepage
@@ -9,3 +9,41 @@ deploy_repositories:
       - monitoring
       - node-exporter
       - cadvisor
+
+homepage_port: 3000
+homepage_config_path: /opt/data/homepage/config
+
+prometheus_scrape_interval: 15s
+
+node_exporter_port: 9100
+
+cadvisor_port: 8088
+cadvisor_scrape_interval: 30s
+cadvisor_scrape_timeout: 25s
+
+promtail_http_port: 9080
+promtail_positions_file: /tmp/positions.yaml
+promtail_log_path: /var/log/*.log
+
+loki_container_name: loki
+loki_port: 3100
+
+monitoring_host_label: docker-main
+
+loki_auth_enabled: false
+
+loki_path_prefix: /loki
+
+loki_chunks_directory: /loki/chunks
+loki_rules_directory: /loki/rules
+
+loki_replication_factor: 1
+loki_ring_store: inmemory
+
+loki_schema_from: "2024-01-01"
+loki_schema_store: tsdb
+loki_object_store: filesystem
+loki_schema_version: v13
+
+loki_index_prefix: index_
+loki_index_period: 24h

@@ -1,0 +1,59 @@
+---
+# =========================
+# MSP GLOBAL SETTINGS
+# =========================
+
+msp_domain: lab.local
+msp_timezone: Europe/Madrid
+
+# =========================
+# CORE NETWORK
+# =========================
+
+srv_docker_main_ip: 192.168.56.X
+srv_docker_apps_ip: 192.168.56.X
+srv_ansible_ip: 192.168.56.X
+bastion_ip: 192.168.56.X
+
+# =========================
+# CORE DOMAINS
+# =========================
+
+core_domains:
+  homepage: home.lab.local
+  grafana: grafana.lab.local
+  prometheus: prometheus.lab.local
+  kuma: kuma.lab.local
+  dozzle: dozzle.lab.local
+  duplicati: duplicati.lab.local
+  portainer: portainer.lab.local
+  npm: npm.lab.local
+  technitium: dns.lab.local
+
+# =========================
+# APP DOMAINS
+# =========================
+
+app_domains:
+  nextcloud: nextcloud.lab.local
+  vaultwarden: vaultwarden.lab.local
+  wireguard: wireguard.lab.local
+
+# =========================
+# DEPLOYMENT SETTINGS
+# =========================
+
+docker_base_path: /opt/docker
+git_base_path: /opt/git
+
+github_owner: Harlock-code
+
+repositories:
+  infrastructure:
+    name: msp-docker-infrastructure
+    url: "https://github.com/Harlock-code/msp-docker-infrastructure.git"
+
+  apps:
+    name: msp-docker-apps
+    url: "https://github.com/Harlock-code/msp-docker-apps.git"
+

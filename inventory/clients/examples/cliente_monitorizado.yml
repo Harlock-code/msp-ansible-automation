@@ -1,6 +1,6 @@
 ---
 repo_name: msp-docker-infrastructure
-repo_url: https://github.com/Harlock-code/msp-docker-infraestructure.git
+repo_url: https://github.com/Harlock-code/msp-docker-infrastructure.git
 
 docker_stacks:
   - monitoring

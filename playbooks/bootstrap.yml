@@ -4,8 +4,17 @@
   become: true
 
   roles:
-    - common
-    - security
-    - docker_engine
-    - monitoring
-    - docker_stack
+    - role: common
+      tags: common
+
+    - role: security
+      tags: security
+
+    - role: docker_engine
+      tags: docker_engine
+
+    - role: monitoring
+      tags: monitoring
+
+    - role: docker_stack
+      tags: docker_stack
