@@ -1,0 +1,11 @@
+---
+- name: Bootstrap Docker Host
+  hosts: all
+  become: true
+
+  roles:
+    - common
+    - security
+    - docker_engine
+    - monitoring
+    - docker_stack

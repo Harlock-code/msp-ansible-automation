@@ -1,0 +1,50 @@
+---
+- name: Create monitoring directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /opt/data/monitoring
+    - /opt/data/monitoring/prometheus
+    - /opt/data/monitoring/prometheus/data
+    - /opt/data/monitoring/grafana
+    - /opt/data/monitoring/loki
+    - /opt/data/monitoring/loki/data
+    - /opt/data/monitoring/promtail
+
+- name: Copy Prometheus config
+  copy:
+    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/prometheus/prometheus.yml"
+    dest: /opt/data/monitoring/prometheus/prometheus.yml
+
+- name: Copy Loki config
+  copy:
+    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/loki/loki-config.yml"
+    dest: /opt/data/monitoring/loki/loki-config.yml
+
+- name: Copy Promtail config
+  copy:
+    src: "{{ playbook_dir }}/../msp-docker-infraestructure/monitoring/promtail/promtail-config.yml"
+    dest: /opt/data/monitoring/promtail/promtail-config.yml
+
+- name: Set Grafana permissions
+  file:
+    path: /opt/data/monitoring/grafana
+    owner: 472
+    group: 472
+    recurse: yes
+
+- name: Set Loki permissions
+  file:
+    path: /opt/data/monitoring/loki
+    owner: 10001
+    group: 10001
+    recurse: yes
+
+- name: Set Prometheus permissions
+  file:
+    path: /opt/data/monitoring/prometheus
+    owner: nobody
+    group: nogroup
+    recurse: yes

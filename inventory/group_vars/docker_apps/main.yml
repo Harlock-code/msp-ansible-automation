@@ -1,0 +1,6 @@
+---
+repo_name: msp-docker-apps
+repo_url: https://github.com/Harlock-code/msp-docker-apps.git
+
+docker_stacks:
+  - vaultwarden
