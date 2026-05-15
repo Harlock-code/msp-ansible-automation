@@ -4,3 +4,5 @@
 .vault_pass
 .ssh/
 __pycache__/
+msp-docker-infrastructure/
+msp-docker-infraestructure/
