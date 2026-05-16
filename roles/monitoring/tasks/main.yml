@@ -75,3 +75,75 @@
     group: javi
     mode: '0600'
   when: inventory_hostname == "srv-docker-main"
+
+- name: Ensure Grafana alerting provisioning directory exists
+  ansible.builtin.file:
+    path: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting
+    state: directory
+    owner: javi
+    group: javi
+    mode: '0755'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana contact points
+  ansible.builtin.template:
+    src: grafana-contact-points.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/contact-points.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana notification policy
+  ansible.builtin.template:
+    src: grafana-notification-policy.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/notification-policy.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana alert rules
+  ansible.builtin.template:
+    src: grafana-alert-rules.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/alert-rules.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana CPU alert rules
+  ansible.builtin.template:
+    src: grafana-alert-cpu.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/alert-rules-cpu.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana Memory alert rules
+  ansible.builtin.template:
+    src: grafana-alert-memory.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/alert-rules-memory.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana Disk alert rules
+  ansible.builtin.template:
+    src: grafana-alert-disk.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/alert-rules-disk.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"
+
+- name: Render Grafana Container alert rules
+  ansible.builtin.template:
+    src: grafana-alert-containers.yml.j2
+    dest: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting/alert-rules-containers.yml
+    owner: javi
+    group: javi
+    mode: '0644'
+  when: inventory_hostname == "srv-docker-main"

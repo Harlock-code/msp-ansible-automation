@@ -1,0 +1,59 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: MSP Infrastructure Alerts
+    folder: MSP Alerts
+    interval: 1m
+    rules:
+      - uid: node_exporter_down
+        title: Node Exporter Down
+        condition: C
+        data:
+          - refId: A
+            datasourceUid: ffm1y4x1ed2iod
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              expr: min(up{job="node-exporter"}) or vector(0)
+              refId: A
+              instant: true
+              datasource:
+                type: prometheus
+                uid: ffm1y4x1ed2iod
+
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: lt
+                    params:
+                      - 1
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              refId: C
+
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 1m
+        annotations:
+          summary: "Node Exporter caído"
+          description: "Node Exporter no responde"
+        labels:
+          severity: warning
+          client: lab
+          environment: production
+          service: linux-host

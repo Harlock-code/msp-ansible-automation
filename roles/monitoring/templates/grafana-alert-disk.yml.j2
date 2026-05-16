@@ -1,0 +1,63 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: MSP Disk Alerts
+    folder: MSP Alerts
+    interval: 1m
+
+    rules:
+      - uid: high_disk_usage
+        title: High Disk Usage
+        condition: C
+
+        data:
+          - refId: A
+            datasourceUid: ffm1y4x1ed2iod
+            relativeTimeRange:
+              from: 300
+              to: 0
+            model:
+              expr: 100 * (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay|squashfs",mountpoint="/"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay|squashfs",mountpoint="/"}))
+              refId: A
+              instant: true
+              datasource:
+                type: prometheus
+                uid: ffm1y4x1ed2iod
+
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              type: threshold
+              expression: A
+              conditions:
+                - evaluator:
+                    type: gt
+                    params:
+                      - 80
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              refId: C
+
+        noDataState: OK
+        execErrState: Alerting
+        for: 2m
+
+        annotations:
+          summary: "Disco alto"
+          description: "Uso de disco superior al 80% en {{ '{{ $labels.instance }}' }}"
+
+        labels:
+          severity: warning
+          client: lab
+          environment: production
+          service: docker

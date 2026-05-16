@@ -47,3 +47,31 @@ loki_schema_version: v13
 
 loki_index_prefix: index_
 loki_index_period: 24h
+
+npm_api_port: 81
+
+npm_proxy_hosts_desired:
+
+  - domain: home.lab.local
+    forward_host: homepage
+    forward_port: 3000
+
+  - domain: grafana.lab.local
+    forward_host: grafana
+    forward_port: 3000
+
+  - domain: prometheus.lab.local
+    forward_host: prometheus
+    forward_port: 9090
+
+  - domain: uptime.lab.local
+    forward_host: uptime-kuma
+    forward_port: 3001
+
+  - domain: dns.lab.local
+    forward_host: technitium-dns
+    forward_port: 5380
+
+  - domain: vault.lab.local
+    forward_host: vaultwarden
+    forward_port: 80
