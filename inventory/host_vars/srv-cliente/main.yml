@@ -1,6 +1,6 @@
-cliente_nombre: "cliente2"
-cliente_subdomain: "cliente2"
-cliente_dominio: "cliente2.lab.local"
+cliente_nombre: "cliente"
+cliente_subdomain: "cliente"
+cliente_dominio: "cliente.lab.local"
 
 cliente_ip: "192.168.56.60"
 

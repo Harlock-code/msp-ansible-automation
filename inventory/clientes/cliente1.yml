@@ -1,9 +1,0 @@
-cliente_nombre: "cliente1"
-
-cliente_dominio: "cliente1.lab.local"
-
-cliente_servicios:
-  - nginx-test
-
-cliente_monitoring: true
-cliente_backup: true

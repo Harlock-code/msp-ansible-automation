@@ -4,8 +4,8 @@ docker_base_path: "/opt/stacks"
 
 monitoring_enabled: true
 
-cliente_nombre: "cliente1"
-cliente_subdomain: "cliente1"
+cliente_nombre: "cliente"
+cliente_subdomain: "cliente"
 cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 
 cliente_servicios:
@@ -81,7 +81,7 @@ docker_networks:
   - monitoring_net
   - backend_net
 
-cliente_ip: "192.168.56.50"
+cliente_ip: "192.168.56.60"
 cliente_npm_port: 81
 cliente_dns_port: 5380
 
