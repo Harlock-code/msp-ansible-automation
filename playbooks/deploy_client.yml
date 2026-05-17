@@ -1,0 +1,12 @@
+---
+- name: Deploy MSP client services
+  hosts: clientes
+  become: true
+
+  roles:
+    - role: docker_stack
+      tags: docker_stack
+
+    - role: reverse_proxy
+      tags: reverse_proxy
+      when: reverse_proxy_enabled | default(false)

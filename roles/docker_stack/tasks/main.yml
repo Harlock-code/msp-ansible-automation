@@ -11,8 +11,10 @@
     dest: "/opt/repos/{{ item.repo_name }}/"
     delete: yes
     recursive: yes
+    rsync_path: "sudo rsync"
   loop: "{{ deploy_repositories }}"
   delegate_to: localhost
+  become: false
 
 - name: Copy env example to .env
   copy:

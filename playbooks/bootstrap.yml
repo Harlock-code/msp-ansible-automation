@@ -19,5 +19,3 @@
     - role: docker_stack
       tags: docker_stack
 
-    - role: reverse_proxy
-      tags: reverse_proxy

@@ -1,0 +1,17 @@
+cliente_nombre: "cliente2"
+cliente_subdomain: "cliente2"
+cliente_dominio: "cliente2.lab.local"
+
+cliente_ip: "192.168.56.60"
+
+cliente_servicios:
+  - nginx-test
+
+cliente_monitoring: true
+cliente_backup: true
+
+deploy_repositories:
+  - repo_name: "msp-docker-apps"
+    repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
+    docker_stacks:
+      - nginx-test
