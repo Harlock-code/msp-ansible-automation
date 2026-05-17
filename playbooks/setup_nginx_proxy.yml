@@ -4,6 +4,26 @@
   gather_facts: false
 
   tasks:
+
+    - name: Inicializar proxy_hosts generados
+      set_fact:
+        proxy_hosts: []
+
+    - name: Generar proxy_hosts desde cliente_servicios
+      set_fact:
+        proxy_hosts: "{{ proxy_hosts + [ {
+          'domain': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local',
+          'forward_host': servicios_catalogo[item].forward_host,
+          'forward_port': servicios_catalogo[item].forward_port,
+          'cert_name': servicios_catalogo[item].cert_name,
+          'cert_file': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local.crt',
+          'key_file': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local.key'
+        } ] }}"
+      loop: "{{ cliente_servicios }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
     - name: Obtener token de NPM
       uri:
         url: "{{ npm_url }}/api/tokens"

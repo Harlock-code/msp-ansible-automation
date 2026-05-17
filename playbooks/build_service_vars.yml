@@ -15,12 +15,12 @@
     - name: Generar proxy_hosts desde cliente_servicios
       set_fact:
         proxy_hosts: "{{ proxy_hosts + [ {
-          'domain': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local',
+          'domain': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local',
           'forward_host': servicios_catalogo[item].forward_host,
           'forward_port': servicios_catalogo[item].forward_port,
           'cert_name': servicios_catalogo[item].cert_name,
-          'cert_file': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local.crt',
-          'key_file': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local.key'
+          'cert_file': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local.crt',
+          'key_file': servicios_catalogo[item].domain_prefix ~ '.' ~ cliente_subdomain ~ '.lab.local.key'
         } ] }}"
       loop: "{{ cliente_servicios }}"
       when:
@@ -31,8 +31,8 @@
       set_fact:
         dns_records: "{{ dns_records + [ {
           'name': servicios_catalogo[item].domain_prefix,
-          'zone': 'cliente.lab.local',
-          'ip': '192.168.56.50'
+          'zone': cliente_subdomain ~ '.lab.local',
+          'ip': cliente_ip
         } ] }}"
       loop: "{{ cliente_servicios }}"
       when:

@@ -1,9 +1,30 @@
 ---
 - name: Configurar DNS automático con Technitium
   hosts: clientes
+  gather_facts: false
+
+  vars_files:
+    - ../inventory/group_vars/clientes/main.yml
   become: false
 
   tasks:
+
+    - name: Inicializar dns_records generados
+      set_fact:
+        dns_records: []
+
+    - name: Generar dns_records desde cliente_servicios
+      set_fact:
+        dns_records: "{{ dns_records + [ {
+          'name': servicios_catalogo[item].domain_prefix,
+          'zone': cliente_subdomain ~ '.lab.local',
+          'ip': cliente_ip
+        } ] }}"
+      loop: "{{ cliente_servicios }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
     - name: Login en Technitium DNS
       uri:
         url: "{{ technitium_url }}/api/user/login"
@@ -27,7 +48,7 @@
         body_format: form-urlencoded
         body:
           token: "{{ technitium_token }}"
-          zone: "cliente.lab.local"
+          zone: "{{ cliente_subdomain }}.lab.local"
           type: "Primary"
         return_content: true
       register: create_zone_result
@@ -59,3 +80,4 @@
       debug:
         msg: "DNS configurado -> {{ item.item.name }}.{{ item.item.zone }} -> {{ item.item.ip }}"
       loop: "{{ dns_records_result.results }}"
+

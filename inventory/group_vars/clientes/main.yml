@@ -5,7 +5,8 @@ docker_base_path: "/opt/stacks"
 monitoring_enabled: true
 
 cliente_nombre: "cliente1"
-cliente_dominio: "cliente1.lab.local"
+cliente_subdomain: "cliente1"
+cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 
 cliente_servicios:
   - nginx-test
@@ -80,14 +81,17 @@ docker_networks:
   - monitoring_net
   - backend_net
 
-npm_url: "http://192.168.56.50:81"
+cliente_ip: "192.168.56.50"
+cliente_npm_port: 81
+cliente_dns_port: 5380
+
+npm_url: "http://{{ cliente_ip }}:{{ cliente_npm_port }}"
 npm_email: "{{ vault_npm_email }}"
 npm_password: "{{ vault_npm_password }}"
 
-
 dns_provider: "technitium"
 
-technitium_url: "http://192.168.56.50:5380"
+technitium_url: "http://{{ cliente_ip }}:{{ cliente_dns_port }}"
 technitium_username: "admin"
 technitium_password: "Template.47"
 
