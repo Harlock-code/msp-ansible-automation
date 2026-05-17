@@ -16,14 +16,20 @@
   delegate_to: localhost
   become: false
 
-- name: Copy env example to .env
+- name: Check if .env.example exists
+  stat:
+    path: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env.example"
+  loop: "{{ deploy_repositories | subelements('docker_stacks', skip_missing=True) }}"
+  register: env_example_files
+
+- name: Copy env example to .env when exists
   copy:
-    src: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env.example"
-    dest: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env"
+    src: "{{ item.stat.path }}"
+    dest: "{{ item.stat.path | dirname }}/.env"
     remote_src: yes
     force: no
-  loop: "{{ deploy_repositories | subelements('docker_stacks', skip_missing=True) }}"
-  ignore_errors: yes
+  loop: "{{ env_example_files.results }}"
+  when: item.stat.exists
 
 - name: Deploy Docker stacks
   shell: |
