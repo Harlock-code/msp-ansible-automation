@@ -1,0 +1,49 @@
+---
+- name: Generar variables dinámicas de servicios MSP
+  hosts: clientes
+  gather_facts: false
+
+  tasks:
+    - name: Inicializar proxy_hosts generados
+      set_fact:
+        proxy_hosts: []
+
+    - name: Inicializar dns_records generados
+      set_fact:
+        dns_records: []
+
+    - name: Generar proxy_hosts desde cliente_servicios
+      set_fact:
+        proxy_hosts: "{{ proxy_hosts + [ {
+          'domain': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local',
+          'forward_host': servicios_catalogo[item].forward_host,
+          'forward_port': servicios_catalogo[item].forward_port,
+          'cert_name': servicios_catalogo[item].cert_name,
+          'cert_file': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local.crt',
+          'key_file': servicios_catalogo[item].domain_prefix ~ '.cliente.lab.local.key'
+        } ] }}"
+      loop: "{{ cliente_servicios }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
+    - name: Generar dns_records desde cliente_servicios
+      set_fact:
+        dns_records: "{{ dns_records + [ {
+          'name': servicios_catalogo[item].domain_prefix,
+          'zone': 'cliente.lab.local',
+          'ip': '192.168.56.50'
+        } ] }}"
+      loop: "{{ cliente_servicios }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
+
+    - name: Mostrar proxy_hosts generados
+      debug:
+        var: proxy_hosts
+
+    - name: Mostrar dns_records generados
+      debug:
+        var: dns_records

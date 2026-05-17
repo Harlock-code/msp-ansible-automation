@@ -12,6 +12,51 @@ cliente_servicios:
   - portainer-agent
   - vaultwarden
   - uptime-kuma
+  - technitium
+  - nextcloud
+  - duplicati
+
+servicios_catalogo:
+
+  portainer-agent:
+    internal_only: true
+
+  vaultwarden:
+    domain_prefix: "vault"
+    forward_host: "vaultwarden"
+    forward_port: 80
+    cert_name: "vault-cliente-lab"
+
+  nginx-test:
+    domain_prefix: "nginx"
+    forward_host: "nginx-test"
+    forward_port: 80
+    cert_name: "nginx-cliente-lab"
+
+  uptime-kuma:
+    domain_prefix: "uptime"
+    forward_host: "uptime-kuma"
+    forward_port: 3001
+    cert_name: "uptime-cliente-lab"
+
+  technitium:
+    domain_prefix: "dns"
+    forward_host: "technitium"
+    forward_port: 5380
+    cert_name: "dns-cliente-lab"
+
+  nextcloud:
+    domain_prefix: "nextcloud"
+    forward_host: "nextcloud"
+    forward_port: 80
+    cert_name: "nextcloud-cliente-lab"
+
+  duplicati:
+    domain_prefix: "backup"
+    forward_host: "duplicati"
+    forward_port: 8200
+    cert_name: "backup-cliente-lab"
+
 
 deploy_repositories:
   - repo_name: "msp-docker-apps"
@@ -20,29 +65,16 @@ deploy_repositories:
 docker_networks:
   - proxy_net
   - monitoring_net
+  - backend_net
 
 npm_url: "http://192.168.56.50:81"
 npm_email: "admin@example.com"
 npm_password: "changeme"
 
-proxy_hosts:
-  - domain: "vault.cliente.lab.local"
-    forward_host: "vaultwarden"
-    forward_port: 80
-    cert_name: "vault-cliente-lab"
-    cert_file: "vault.cliente.lab.local.crt"
-    key_file: "vault.cliente.lab.local.key"
 
-  - domain: "nginx.cliente.lab.local"
-    forward_host: "nginx-test"
-    forward_port: 80
-    cert_name: "nginx-cliente-lab"
-    cert_file: "nginx.cliente.lab.local.crt"
-    key_file: "nginx.cliente.lab.local.key"
+dns_provider: "technitium"
 
-  - domain: "uptime.cliente.lab.local"
-    forward_host: "uptime-kuma"
-    forward_port: 3001
-    cert_name: "uptime-cliente-lab"
-    cert_file: "uptime.cliente.lab.local.crt"
-    key_file: "uptime.cliente.lab.local.key"
+technitium_url: "http://192.168.56.50:5380"
+technitium_username: "admin"
+technitium_password: "Template.47"
+

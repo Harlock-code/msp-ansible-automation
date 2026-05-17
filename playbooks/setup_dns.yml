@@ -1,0 +1,61 @@
+---
+- name: Configurar DNS automático con Technitium
+  hosts: clientes
+  become: false
+
+  tasks:
+    - name: Login en Technitium DNS
+      uri:
+        url: "{{ technitium_url }}/api/user/login"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          user: "{{ technitium_username }}"
+          pass: "{{ technitium_password }}"
+        return_content: true
+      register: technitium_login
+      delegate_to: localhost
+
+    - name: Guardar token Technitium
+      set_fact:
+        technitium_token: "{{ technitium_login.json.token }}"
+
+    - name: Crear zona DNS si no existe
+      uri:
+        url: "{{ technitium_url }}/api/zones/create"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          token: "{{ technitium_token }}"
+          zone: "cliente.lab.local"
+          type: "Primary"
+        return_content: true
+      register: create_zone_result
+      failed_when: false
+      changed_when: "'ok' in create_zone_result.content"
+      delegate_to: localhost
+
+    - name: Crear registros A en Technitium
+      uri:
+        url: "{{ technitium_url }}/api/zones/records/add"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          token: "{{ technitium_token }}"
+          domain: "{{ item.name }}.{{ item.zone }}"
+          zone: "{{ item.zone }}"
+          type: "A"
+          ipAddress: "{{ item.ip }}"
+          ttl: "3600"
+          overwrite: "true"
+        return_content: true
+      loop: "{{ dns_records }}"
+      register: dns_records_result
+      failed_when: false
+      changed_when: "'ok' in dns_records_result.content"
+      delegate_to: localhost
+
+    - name: Mostrar resultado DNS
+      debug:
+        msg: "DNS configurado -> {{ item.item.name }}.{{ item.item.zone }} -> {{ item.item.ip }}"
+      loop: "{{ dns_records_result.results }}"
