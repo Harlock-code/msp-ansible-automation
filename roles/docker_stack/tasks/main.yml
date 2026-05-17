@@ -5,13 +5,14 @@
     state: directory
     mode: '0755'
 
-- name: Clone repositories
-  git:
-    repo: "{{ item.repo_url }}"
-    dest: "/opt/repos/{{ item.repo_name }}"
-    version: main
-    force: yes
+- name: Copy repositories from Ansible controller to client
+  synchronize:
+    src: "{{ playbook_dir }}/../{{ item.repo_name }}/"
+    dest: "/opt/repos/{{ item.repo_name }}/"
+    delete: yes
+    recursive: yes
   loop: "{{ deploy_repositories }}"
+  delegate_to: localhost
 
 - name: Copy env example to .env
   copy:
@@ -19,7 +20,7 @@
     dest: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env"
     remote_src: yes
     force: no
-  loop: "{{ deploy_repositories | subelements('docker_stacks') }}"
+  loop: "{{ deploy_repositories | subelements('docker_stacks', skip_missing=True) }}"
   ignore_errors: yes
 
 - name: Deploy Docker stacks
@@ -27,4 +28,4 @@
     docker compose up -d
   args:
     chdir: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}"
-  loop: "{{ deploy_repositories | subelements('docker_stacks') }}"
+  loop: "{{ deploy_repositories | subelements('docker_stacks', skip_missing=True) }}"

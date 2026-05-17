@@ -1,0 +1,63 @@
+---
+- name: Bootstrap inicial de acceso para cliente MSP
+  hosts: clientes
+  become: true
+  gather_facts: false
+
+  vars:
+    ansible_admin_user: "javi"
+
+  pre_tasks:
+    - name: Instalar Python si no existe
+      raw: |
+        test -e /usr/bin/python3 || (apt update && apt install -y python3)
+      changed_when: false
+
+  tasks:
+    - name: Instalar paquetes base mínimos
+      apt:
+        name:
+          - sudo
+          - rsync
+          - curl
+          - ca-certificates
+          - openssh-server
+          - python3
+        state: present
+        update_cache: yes
+
+    - name: Crear usuario administrador
+      user:
+        name: "{{ ansible_admin_user }}"
+        shell: /bin/bash
+        groups: sudo
+        append: true
+        create_home: true
+
+    - name: Permitir sudo sin contraseña para usuario admin
+      copy:
+        dest: "/etc/sudoers.d/{{ ansible_admin_user }}"
+        content: "{{ ansible_admin_user }} ALL=(ALL) NOPASSWD:ALL\n"
+        owner: root
+        group: root
+        mode: "0440"
+
+    - name: Crear directorio .ssh del usuario admin
+      file:
+        path: "/home/{{ ansible_admin_user }}/.ssh"
+        state: directory
+        owner: "{{ ansible_admin_user }}"
+        group: "{{ ansible_admin_user }}"
+        mode: "0700"
+
+    - name: Instalar clave pública de Ansible
+      authorized_key:
+        user: "{{ ansible_admin_user }}"
+        state: present
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+    - name: Asegurar SSH activo
+      service:
+        name: ssh
+        state: started
+        enabled: true
