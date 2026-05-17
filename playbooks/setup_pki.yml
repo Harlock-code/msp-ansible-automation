@@ -1,0 +1,7 @@
+---
+- name: Configurar PKI interna MSP en cliente
+  hosts: clientes
+  become: true
+
+  roles:
+    - pki

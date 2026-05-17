@@ -1,0 +1,53 @@
+---
+- name: Bootstrap servidor cliente MSP
+  hosts: clientes
+  become: true
+
+  tasks:
+    - name: Actualizar cache APT
+      apt:
+        update_cache: true
+
+    - name: Instalar paquetes base
+      apt:
+        name:
+          - curl
+          - git
+          - ca-certificates
+          - gnupg
+          - lsb-release
+          - sudo
+          - python3
+          - python3-pip
+          - docker.io
+          - docker-compose
+        state: present
+
+    - name: Activar Docker
+      service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Añadir usuario javi al grupo docker
+      user:
+        name: javi
+        groups: docker
+        append: true
+
+    - name: Crear directorio /opt/repos
+      file:
+        path: /opt/repos
+        state: directory
+        owner: javi
+        group: javi
+        mode: "0755"
+
+    - name: Crear directorio base de stacks
+      file:
+        path: "{{ docker_base_path }}"
+        state: directory
+        owner: javi
+        group: javi
+        mode: "0755"
+

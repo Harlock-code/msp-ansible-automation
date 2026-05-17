@@ -1,0 +1,74 @@
+---
+- name: Crear directorio local de certificados PKI
+  file:
+    path: "{{ playbook_dir }}/../roles/pki/files"
+    state: directory
+    mode: "0755"
+  delegate_to: localhost
+  run_once: true
+  become: false
+
+- name: Crear clave privada para cada servicio
+  command: >
+    openssl genrsa
+    -out {{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}
+    2048
+  args:
+    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}"
+  loop: "{{ proxy_hosts }}"
+  delegate_to: localhost
+  become: false
+
+- name: Crear CSR para cada servicio
+  command: >
+    openssl req -new
+    -key {{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}
+    -out {{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr
+    -subj "/CN={{ item.domain }}"
+  args:
+    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr"
+  loop: "{{ proxy_hosts }}"
+  delegate_to: localhost
+  become: false
+
+- name: Crear certificado firmado por CA local para cada servicio
+  command: >
+    openssl x509 -req
+    -in {{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr
+    -CA {{ playbook_dir }}/../roles/pki/files/msp-root-ca.crt
+    -CAkey {{ playbook_dir }}/../roles/pki/files/msp-root-ca.key
+    -CAcreateserial
+    -out {{ playbook_dir }}/../roles/pki/files/{{ item.cert_file }}
+    -days 825
+    -sha256
+  args:
+    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.cert_file }}"
+  loop: "{{ proxy_hosts }}"
+  delegate_to: localhost
+  become: false
+
+- name: Crear directorio SSL personalizado para NPM
+  file:
+    path: /opt/data/nginx-proxy-manager/custom_ssl
+    state: directory
+    owner: javi
+    group: javi
+    mode: "0755"
+
+- name: Copiar certificados públicos de servicios al cliente
+  copy:
+    src: "{{ item.cert_file }}"
+    dest: "/opt/data/nginx-proxy-manager/custom_ssl/{{ item.cert_file }}"
+    owner: javi
+    group: javi
+    mode: "0644"
+  loop: "{{ proxy_hosts }}"
+
+- name: Copiar claves privadas de servicios al cliente
+  copy:
+    src: "{{ item.key_file }}"
+    dest: "/opt/data/nginx-proxy-manager/custom_ssl/{{ item.key_file }}"
+    owner: javi
+    group: javi
+    mode: "0600"
+  loop: "{{ proxy_hosts }}"

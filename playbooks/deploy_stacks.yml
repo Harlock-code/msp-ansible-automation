@@ -1,0 +1,39 @@
+---
+- name: Deploy stacks cliente MSP
+  hosts: clientes
+  become: true
+
+  tasks:
+
+    - name: Actualizar repositorios definidos para el cliente
+      git:
+        repo: "{{ item.repo_url }}"
+        dest: "/opt/repos/{{ item.repo_name }}"
+        version: main
+        update: true
+        accept_hostkey: true
+      loop: "{{ deploy_repositories }}"
+      become: false
+
+    - name: Crear redes Docker comunes del cliente
+      shell: |
+        docker network inspect {{ item }} >/dev/null 2>&1 || docker network create {{ item }}
+      loop: "{{ docker_networks }}"
+      become: false
+      changed_when: false
+
+    - name: Crear .env desde .env.example si no existe
+      shell: |
+        if [ -f /opt/repos/msp-docker-apps/{{ item }}/.env.example ] && [ ! -f /opt/repos/msp-docker-apps/{{ item }}/.env ]; then
+          cp /opt/repos/msp-docker-apps/{{ item }}/.env.example /opt/repos/msp-docker-apps/{{ item }}/.env
+        fi
+      loop: "{{ cliente_servicios }}"
+      become: false
+      changed_when: false
+
+    - name: Desplegar stacks docker del cliente
+      community.docker.docker_compose_v2:
+        project_src: "/opt/repos/msp-docker-apps/{{ item }}"
+        state: present
+      loop: "{{ cliente_servicios }}"
+      become: false

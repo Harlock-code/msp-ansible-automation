@@ -1,0 +1,173 @@
+---
+- name: Configurar Nginx Proxy Manager por API
+  hosts: clientes
+  gather_facts: false
+
+  tasks:
+    - name: Obtener token de NPM
+      uri:
+        url: "{{ npm_url }}/api/tokens"
+        method: POST
+        body_format: json
+        body:
+          identity: "{{ npm_email }}"
+          secret: "{{ npm_password }}"
+        return_content: true
+      register: npm_auth
+      delegate_to: localhost
+
+    - name: Obtener certificados existentes en NPM
+      uri:
+        url: "{{ npm_url }}/api/nginx/certificates"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        return_content: true
+      register: npm_existing_certs
+      delegate_to: localhost
+
+    - name: Obtener Proxy Hosts existentes en NPM
+      uri:
+        url: "{{ npm_url }}/api/nginx/proxy-hosts"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        return_content: true
+      register: npm_existing_proxy_hosts
+      delegate_to: localhost
+
+    - name: Crear certificado custom si no existe
+      uri:
+        url: "{{ npm_url }}/api/nginx/certificates"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        body_format: json
+        body:
+          provider: "other"
+          nice_name: "{{ item.cert_name }}"
+        status_code: 201
+        return_content: true
+      loop: "{{ proxy_hosts }}"
+      when: item.cert_name not in (npm_existing_certs.json | map(attribute='nice_name') | list)
+      register: npm_certs_created
+      delegate_to: localhost
+
+    - name: Refrescar certificados después de crear
+      uri:
+        url: "{{ npm_url }}/api/nginx/certificates"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        return_content: true
+      register: npm_all_certs
+      delegate_to: localhost
+
+    - name: Subir CRT/KEY a certificados recién creados
+      command: >
+        curl -s -X POST "{{ npm_url }}/api/nginx/certificates/{{
+          (
+            npm_all_certs.json
+            | selectattr('nice_name', 'equalto', item.cert_name)
+            | list
+          )[0].id
+        }}/upload"
+        -H "Authorization: Bearer {{ npm_auth.json.token }}"
+        -F "certificate=@/home/javi/ansible/roles/pki/files/{{ item.cert_file }}"
+        -F "certificate_key=@/home/javi/ansible/roles/pki/files/{{ item.key_file }}"
+      loop: "{{ proxy_hosts }}"
+      when: item.cert_name not in (npm_existing_certs.json | map(attribute='nice_name') | list)
+      delegate_to: localhost
+
+    - name: Crear Proxy Host si no existe
+      uri:
+        url: "{{ npm_url }}/api/nginx/proxy-hosts"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        body_format: json
+        body:
+          domain_names:
+            - "{{ item.domain }}"
+          forward_scheme: "http"
+          forward_host: "{{ item.forward_host }}"
+          forward_port: "{{ item.forward_port }}"
+          certificate_id: >-
+            {{
+              (
+                npm_all_certs.json
+                | selectattr('nice_name', 'equalto', item.cert_name)
+                | list
+              )[0].id
+            }}
+          ssl_forced: true
+          http2_support: true
+          hsts_enabled: false
+          hsts_subdomains: false
+          block_exploits: true
+          caching_enabled: false
+          allow_websocket_upgrade: true
+          access_list_id: 0
+          advanced_config: ""
+          enabled: true
+          meta: {}
+          locations: []
+        status_code: 201
+        return_content: true
+      loop: "{{ proxy_hosts }}"
+      when: item.domain not in (npm_existing_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
+      delegate_to: localhost
+
+    - name: Refrescar Proxy Hosts después de crear
+      uri:
+        url: "{{ npm_url }}/api/nginx/proxy-hosts"
+        method: GET
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        return_content: true
+      register: npm_all_proxy_hosts
+      delegate_to: localhost
+
+    - name: Actualizar Proxy Host existente
+      uri:
+        url: "{{ npm_url }}/api/nginx/proxy-hosts/{{
+          (
+            npm_all_proxy_hosts.json
+            | selectattr('domain_names', 'contains', item.domain)
+            | list
+          )[0].id
+        }}"
+        method: PUT
+        headers:
+          Authorization: "Bearer {{ npm_auth.json.token }}"
+        body_format: json
+        body:
+          domain_names:
+            - "{{ item.domain }}"
+          forward_scheme: "http"
+          forward_host: "{{ item.forward_host }}"
+          forward_port: "{{ item.forward_port }}"
+          certificate_id: >-
+            {{
+              (
+                npm_all_certs.json
+                | selectattr('nice_name', 'equalto', item.cert_name)
+                | list
+              )[0].id
+            }}
+          ssl_forced: true
+          http2_support: true
+          hsts_enabled: false
+          hsts_subdomains: false
+          block_exploits: true
+          caching_enabled: false
+          allow_websocket_upgrade: true
+          access_list_id: 0
+          advanced_config: ""
+          enabled: true
+          meta: {}
+          locations: []
+        status_code: 200
+        return_content: true
+      loop: "{{ proxy_hosts }}"
+      delegate_to: localhost

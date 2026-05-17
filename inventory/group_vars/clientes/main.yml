@@ -1,0 +1,48 @@
+timezone: "Europe/Madrid"
+
+docker_base_path: "/opt/stacks"
+
+monitoring_enabled: true
+
+cliente_nombre: "cliente1"
+cliente_dominio: "cliente1.lab.local"
+
+cliente_servicios:
+  - nginx-test
+  - portainer-agent
+  - vaultwarden
+  - uptime-kuma
+
+deploy_repositories:
+  - repo_name: "msp-docker-apps"
+    repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
+
+docker_networks:
+  - proxy_net
+  - monitoring_net
+
+npm_url: "http://192.168.56.50:81"
+npm_email: "admin@example.com"
+npm_password: "changeme"
+
+proxy_hosts:
+  - domain: "vault.cliente.lab.local"
+    forward_host: "vaultwarden"
+    forward_port: 80
+    cert_name: "vault-cliente-lab"
+    cert_file: "vault.cliente.lab.local.crt"
+    key_file: "vault.cliente.lab.local.key"
+
+  - domain: "nginx.cliente.lab.local"
+    forward_host: "nginx-test"
+    forward_port: 80
+    cert_name: "nginx-cliente-lab"
+    cert_file: "nginx.cliente.lab.local.crt"
+    key_file: "nginx.cliente.lab.local.key"
+
+  - domain: "uptime.cliente.lab.local"
+    forward_host: "uptime-kuma"
+    forward_port: 3001
+    cert_name: "uptime-cliente-lab"
+    cert_file: "uptime.cliente.lab.local.crt"
+    key_file: "uptime.cliente.lab.local.key"
