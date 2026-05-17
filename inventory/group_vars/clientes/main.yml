@@ -68,8 +68,8 @@ docker_networks:
   - backend_net
 
 npm_url: "http://192.168.56.50:81"
-npm_email: "admin@example.com"
-npm_password: "changeme"
+npm_email: "{{ vault_npm_email }}"
+npm_password: "{{ vault_npm_password }}"
 
 
 dns_provider: "technitium"

@@ -1,7 +1,7 @@
 ---
 - name: Crear directorio local de certificados PKI
   file:
-    path: "{{ playbook_dir }}/../roles/pki/files"
+    path: "/opt/msp-pki"
     state: directory
     mode: "0755"
   delegate_to: localhost
@@ -11,10 +11,10 @@
 - name: Crear clave privada para cada servicio
   command: >
     openssl genrsa
-    -out {{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}
+    -out /opt/msp-pki/{{ item.key_file }}
     2048
   args:
-    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}"
+    creates: "/opt/msp-pki/{{ item.key_file }}"
   loop: "{{ proxy_hosts }}"
   delegate_to: localhost
   become: false
@@ -22,11 +22,11 @@
 - name: Crear CSR para cada servicio
   command: >
     openssl req -new
-    -key {{ playbook_dir }}/../roles/pki/files/{{ item.key_file }}
-    -out {{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr
+    -key /opt/msp-pki/{{ item.key_file }}
+    -out /opt/msp-pki/{{ item.domain }}.csr
     -subj "/CN={{ item.domain }}"
   args:
-    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr"
+    creates: "/opt/msp-pki/{{ item.domain }}.csr"
   loop: "{{ proxy_hosts }}"
   delegate_to: localhost
   become: false
@@ -34,15 +34,15 @@
 - name: Crear certificado firmado por CA local para cada servicio
   command: >
     openssl x509 -req
-    -in {{ playbook_dir }}/../roles/pki/files/{{ item.domain }}.csr
-    -CA {{ playbook_dir }}/../roles/pki/files/msp-root-ca.crt
-    -CAkey {{ playbook_dir }}/../roles/pki/files/msp-root-ca.key
+    -in /opt/msp-pki/{{ item.domain }}.csr
+    -CA /opt/msp-pki/msp-root-ca.crt
+    -CAkey /opt/msp-pki/msp-root-ca.key
     -CAcreateserial
-    -out {{ playbook_dir }}/../roles/pki/files/{{ item.cert_file }}
+    -out /opt/msp-pki/{{ item.cert_file }}
     -days 825
     -sha256
   args:
-    creates: "{{ playbook_dir }}/../roles/pki/files/{{ item.cert_file }}"
+    creates: "/opt/msp-pki/{{ item.cert_file }}"
   loop: "{{ proxy_hosts }}"
   delegate_to: localhost
   become: false
