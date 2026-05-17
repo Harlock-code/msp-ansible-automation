@@ -1,8 +1,28 @@
 *.retry
-.env
 *.log
-.vault_pass
-.ssh/
 __pycache__/
+
+# Secrets
+.env
+.env.*
+.vault_pass
+*.key
+*.crt
+*.csr
+*.srl
+
+# SSH / access
+.ssh/
+
+# PKI local files
+roles/pki/files/
+files/pki/
+
+# Local backups
+*.bak
+*.backup
+
+# Embedded repos
 msp-docker-infrastructure/
 msp-docker-infraestructure/
+msp-docker-apps/
