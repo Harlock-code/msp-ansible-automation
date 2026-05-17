@@ -73,8 +73,8 @@
           )[0].id
         }}/upload"
         -H "Authorization: Bearer {{ npm_auth.json.token }}"
-        -F "certificate=@/home/javi/ansible/roles/pki/files/{{ item.cert_file }}"
-        -F "certificate_key=@/home/javi/ansible/roles/pki/files/{{ item.key_file }}"
+        -F "certificate=@/opt/msp-pki/{{ item.cert_file }}"
+        -F "certificate_key=@/opt/msp-pki/{{ item.key_file }}"
       loop: "{{ proxy_hosts }}"
       when: item.cert_name not in (npm_existing_certs.json | map(attribute='nice_name') | list)
       delegate_to: localhost

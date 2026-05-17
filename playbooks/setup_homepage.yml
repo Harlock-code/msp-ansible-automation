@@ -1,0 +1,87 @@
+---
+- name: Configurar Homepage del cliente
+  hosts: clientes
+  become: true
+
+  tasks:
+    - name: Crear directorio de configuración de Homepage
+      file:
+        path: /opt/data/homepage/config
+        state: directory
+        owner: javi
+        group: javi
+        mode: "0755"
+
+    - name: Generar services.yaml dinámico
+      template:
+        src: ../roles/homepage/templates/services.yaml.j2
+        dest: /opt/data/homepage/config/services.yaml
+        owner: javi
+        group: javi
+        mode: "0644"
+
+    - name: Generar bookmarks.yaml vacío
+      copy:
+        dest: /opt/data/homepage/config/bookmarks.yaml
+        content: |
+          []
+        owner: javi
+        group: javi
+        mode: "0644"
+
+    - name: Reiniciar Homepage
+      shell: docker restart homepage
+      failed_when: false
+
+    - name: Generar settings.yaml
+      copy:
+        dest: /opt/data/homepage/config/settings.yaml
+        content: |
+          title: MSP Portal
+          theme: dark
+          color: slate
+
+          background:
+            image: https://images.unsplash.com/photo-1518770660439-4636190af475
+            blur: sm
+            saturate: 50
+            brightness: 40
+            opacity: 40
+
+          headerStyle: clean
+
+          layout:
+            Productividad:
+              style: row
+              columns: 2
+
+            Backups:
+              style: row
+              columns: 2
+
+            Monitorización:
+              style: row
+              columns: 2
+
+            Infraestructura:
+              style: row
+              columns: 2
+        owner: javi
+        group: javi
+        mode: "0644"
+
+    - name: Generar widgets.yaml
+      copy:
+        dest: /opt/data/homepage/config/widgets.yaml
+        content: |
+          - resources:
+              cpu: true
+              memory: true
+              disk: /
+
+          - search:
+              provider: google
+              target: _blank
+        owner: javi
+        group: javi
+        mode: "0644"

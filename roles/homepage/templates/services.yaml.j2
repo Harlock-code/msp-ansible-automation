@@ -1,0 +1,39 @@
+- Productividad:
+{% for servicio in cliente_servicios %}
+{% if servicio in ['nextcloud', 'vaultwarden'] %}
+    - {{ servicio }}:
+        href: https://{{ servicios_catalogo[servicio].domain_prefix }}.cliente.lab.local
+        description: Servicio de productividad
+        icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
+{% endfor %}
+
+- Backups:
+{% for servicio in cliente_servicios %}
+{% if servicio in ['duplicati'] %}
+    - {{ servicio }}:
+        href: https://{{ servicios_catalogo[servicio].domain_prefix }}.cliente.lab.local
+        description: Copias de seguridad
+        icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
+{% endfor %}
+
+- Monitorización:
+{% for servicio in cliente_servicios %}
+{% if servicio in ['uptime-kuma'] %}
+    - {{ servicio }}:
+        href: https://{{ servicios_catalogo[servicio].domain_prefix }}.cliente.lab.local
+        description: Monitorización de servicios
+        icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
+{% endfor %}
+
+- Infraestructura:
+{% for servicio in cliente_servicios %}
+{% if servicio in ['technitium', 'nginx-test'] %}
+    - {{ servicio }}:
+        href: https://{{ servicios_catalogo[servicio].domain_prefix }}.cliente.lab.local
+        description: Servicio interno de infraestructura
+        icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
+{% endfor %}

@@ -15,48 +15,61 @@ cliente_servicios:
   - technitium
   - nextcloud
   - duplicati
+  - homepage
 
 servicios_catalogo:
 
   portainer-agent:
     internal_only: true
 
+  homepage:
+    domain_prefix: "home"
+    forward_host: "homepage"
+    forward_port: 3000
+    cert_name: "home-cliente-lab"
+    icon: "homepage"
+
   vaultwarden:
     domain_prefix: "vault"
     forward_host: "vaultwarden"
     forward_port: 80
     cert_name: "vault-cliente-lab"
-
-  nginx-test:
-    domain_prefix: "nginx"
-    forward_host: "nginx-test"
-    forward_port: 80
-    cert_name: "nginx-cliente-lab"
+    icon: "vaultwarden"
 
   uptime-kuma:
     domain_prefix: "uptime"
     forward_host: "uptime-kuma"
     forward_port: 3001
     cert_name: "uptime-cliente-lab"
+    icon: "uptime-kuma"
 
   technitium:
     domain_prefix: "dns"
     forward_host: "technitium"
     forward_port: 5380
     cert_name: "dns-cliente-lab"
+    icon: "technitium"
 
   nextcloud:
     domain_prefix: "nextcloud"
     forward_host: "nextcloud"
     forward_port: 80
     cert_name: "nextcloud-cliente-lab"
+    icon: "nextcloud"
 
   duplicati:
     domain_prefix: "backup"
     forward_host: "duplicati"
     forward_port: 8200
     cert_name: "backup-cliente-lab"
+    icon: "duplicati"
 
+  nginx-test:
+    domain_prefix: "nginx"
+    forward_host: "nginx-test"
+    forward_port: 80
+    cert_name: "nginx-cliente-lab"
+    icon: "nginx"
 
 deploy_repositories:
   - repo_name: "msp-docker-apps"
