@@ -6,21 +6,21 @@ cliente_ip: "192.168.56.60"
 
 
 core_services:
-  reverse_proxy: false
-  dns: false
-  homepage: false
+  reverse_proxy: true
+  dns: true
+  homepage: true
   monitoring: false
   backup: false
 
 apps:
   nginx_test: true
-  portainer_agent: true
+  portainer_agent: false
   vaultwarden: true
   uptime_kuma: true
   technitium: true
   nextcloud: true
-  duplicati: true
-  homepage: true
+  duplicati: false
+  homepage: false
 
 cliente_monitoring: true
 cliente_backup: true

@@ -23,6 +23,11 @@ servicios_catalogo:
   portainer-agent:
     internal_only: true
 
+  nginx-proxy-manager:
+    repo: msp-docker-infrastructure
+    internal_only: true
+    icon: "nginx-proxy-manager"
+
   homepage:
     repo: msp-docker-apps
     domain_prefix: "home"

@@ -9,6 +9,12 @@
     - role: docker_stack
       tags: docker_stack
 
+    - role: homepage
+      tags: homepage
+      when: core_services.homepage | default(false)
+
     - role: reverse_proxy
       tags: reverse_proxy
-      when: reverse_proxy_enabled | default(false)
+      when: core_services.reverse_proxy | default(false)
+
+- import_playbook: setup_dns.yml

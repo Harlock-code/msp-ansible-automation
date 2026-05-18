@@ -14,6 +14,11 @@
         generated_cliente_servicios: "{{ generated_cliente_servicios + ['nginx-test'] }}"
       when: apps.nginx_test | default(false)
 
+    - name: Añadir nginx-proxy-manager si reverse_proxy está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['nginx-proxy-manager'] }}"
+      when: core_services.reverse_proxy | default(false)
+
     - name: Añadir portainer-agent si está activado
       set_fact:
         generated_cliente_servicios: "{{ generated_cliente_servicios + ['portainer-agent'] }}"
@@ -47,7 +52,7 @@
     - name: Añadir homepage si está activado
       set_fact:
         generated_cliente_servicios: "{{ generated_cliente_servicios + ['homepage'] }}"
-      when: apps.homepage | default(false)
+      when: core_services.homepage | default(false)
 
     - name: Usar cliente_servicios generados desde flags
       set_fact:
@@ -73,7 +78,12 @@
         generated_deploy_repositories:
           - repo_name: "msp-docker-apps"
             repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
-            docker_stacks: "{{ generated_docker_stacks }}"
+            docker_stacks: "{{ generated_docker_stacks | difference(['nginx-proxy-manager']) }}"
+
+          - repo_name: "msp-docker-infrastructure"
+            repo_url: "git@github.com:Harlock-code/msp-docker-infrastructure.git"
+            docker_stacks:
+              - nginx-proxy-manager
 
     - name: Mostrar deploy_repositories generados
       debug:
@@ -101,6 +111,10 @@
       when:
         - servicios_catalogo[item] is defined
         - servicios_catalogo[item].internal_only | default(false) == false
+
+    - name: Mapear proxy_hosts generados a variable esperada por reverse_proxy
+      set_fact:
+        npm_proxy_hosts_desired: "{{ proxy_hosts }}"
 
     - name: Generar dns_records desde cliente_servicios
       set_fact:

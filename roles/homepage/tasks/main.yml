@@ -1,0 +1,15 @@
+---
+- name: Ensure Homepage config directory exists
+  file:
+    path: /opt/data/homepage/config
+    state: directory
+    mode: '0755'
+
+- name: Generate Homepage services config
+  template:
+    src: services.yaml.j2
+    dest: /opt/data/homepage/config/services.yaml
+    mode: '0644'
+
+- name: Restart Homepage container
+  shell: docker restart homepage || true
