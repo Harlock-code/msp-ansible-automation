@@ -6,6 +6,10 @@
   become: true
 
   roles:
+
+    - role: docker_stack_absent
+      tags: docker_stack_absent
+
     - role: docker_stack
       tags: docker_stack
 

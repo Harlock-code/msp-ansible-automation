@@ -8,16 +8,6 @@ cliente_nombre: "cliente"
 cliente_subdomain: "cliente"
 cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 
-cliente_servicios:
-  - nginx-test
-  - portainer-agent
-  - vaultwarden
-  - uptime-kuma
-  - technitium
-  - nextcloud
-  - duplicati
-  - homepage
-
 servicios_catalogo:
 
   portainer-agent:
@@ -25,7 +15,10 @@ servicios_catalogo:
 
   nginx-proxy-manager:
     repo: msp-docker-infrastructure
-    internal_only: true
+    domain_prefix: "npm"
+    forward_host: "nginx-proxy-manager"
+    forward_port: 81
+    cert_name: "npm-cliente-lab"
     icon: "nginx-proxy-manager"
 
   homepage:

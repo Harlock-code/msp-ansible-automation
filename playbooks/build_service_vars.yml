@@ -128,6 +128,80 @@
         - servicios_catalogo[item] is defined
         - servicios_catalogo[item].internal_only | default(false) == false
 
+    - name: Build absent apps list
+      set_fact:
+        absent_services: "{{ absent_services | default([]) + [item.key] }}"
+      loop: "{{ apps | dict2items }}"
+      when:
+        - item.value is boolean
+        - item.value == false
+        - item.key in servicios_catalogo
+        - item.key in apps_absent_manage | default([])
+
+    - name: Build absent core services list
+      set_fact:
+        absent_services: "{{ absent_services | default([]) + [item.key] }}"
+      loop: "{{ core_services | dict2items }}"
+      when:
+        - item.value is boolean
+        - item.value == false
+        - item.key in servicios_catalogo
+
+    - name: Mostrar absent_services
+      debug:
+        var: absent_services
+
+    - name: Inicializar npm_proxy_hosts_absent
+      set_fact:
+        npm_proxy_hosts_absent: []
+
+    - name: Generar npm_proxy_hosts_absent desde absent_services
+      set_fact:
+        npm_proxy_hosts_absent: >-
+          {{
+            npm_proxy_hosts_absent + [
+              {
+                "service": item,
+                "domain": servicios_catalogo[item].domain_prefix ~ "." ~ cliente_subdomain ~ ".lab.local"
+              }
+            ]
+          }}
+      loop: "{{ absent_services | default([]) }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].domain_prefix is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
+    - name: Mostrar npm_proxy_hosts_absent
+      debug:
+        var: npm_proxy_hosts_absent
+
+    - name: Inicializar dns_records_absent
+      set_fact:
+        dns_records_absent: []
+
+    - name: Generar dns_records_absent desde absent_services
+      set_fact:
+        dns_records_absent: >-
+          {{
+            dns_records_absent + [
+              {
+                "service": item,
+                "name": servicios_catalogo[item].domain_prefix,
+                "zone": cliente_subdomain ~ ".lab.local",
+                "domain": servicios_catalogo[item].domain_prefix ~ "." ~ cliente_subdomain ~ ".lab.local"
+              }
+            ]
+          }}
+      loop: "{{ absent_services | default([]) }}"
+      when:
+        - servicios_catalogo[item] is defined
+        - servicios_catalogo[item].domain_prefix is defined
+        - servicios_catalogo[item].internal_only | default(false) == false
+
+    - name: Mostrar dns_records_absent
+      debug:
+        var: dns_records_absent
 
     - name: Mostrar proxy_hosts generados
       debug:
@@ -136,3 +210,4 @@
     - name: Mostrar dns_records generados
       debug:
         var: dns_records
+

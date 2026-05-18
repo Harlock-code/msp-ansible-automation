@@ -27,6 +27,28 @@
   register: npm_proxy_hosts
   no_log: true
 
+- name: Delete absent proxy hosts from NPM
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts/{{ item_id }}"
+    method: DELETE
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    status_code: 200
+  vars:
+    item_id: >-
+      {{
+        (
+          npm_proxy_hosts.json
+          | selectattr('domain_names', 'contains', item.domain)
+          | map(attribute='id')
+          | first
+        )
+      }}
+  loop: "{{ npm_proxy_hosts_absent | default([]) }}"
+  when:
+    - npm_proxy_hosts_absent is defined
+    - item.domain in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
+
 - name: Create proxy hosts
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts"

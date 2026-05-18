@@ -18,9 +18,13 @@ apps:
   vaultwarden: true
   uptime_kuma: true
   technitium: true
-  nextcloud: true
+  nextcloud: false
   duplicati: false
   homepage: false
+
+apps_absent_manage:
+  - nextcloud
+
 
 cliente_monitoring: true
 cliente_backup: true

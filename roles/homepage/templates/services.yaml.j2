@@ -1,44 +1,52 @@
 {% set productividad = cliente_servicios | select('in', ['nextcloud', 'vaultwarden']) | list %}
 {% set backups = cliente_servicios | select('in', ['duplicati']) | list %}
 {% set monitorizacion = cliente_servicios | select('in', ['uptime-kuma']) | list %}
-{% set infraestructura = cliente_servicios | select('in', ['technitium', 'nginx-test']) | list %}
+{% set infraestructura = cliente_servicios | select('in', ['technitium', 'nginx-test', 'nginx-proxy-manager']) | list %}
 
 {% if productividad | length > 0 %}
 - Productividad:
 {% for servicio in productividad %}
+{% if servicios_catalogo[servicio].domain_prefix is defined %}
     - {{ servicio | replace('-', ' ') | title }}:
         href: http://{{ servicios_catalogo[servicio].domain_prefix }}.{{ cliente_subdomain }}.lab.local
         description: Servicio de productividad
         icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
 {% endfor %}
 {% endif %}
 
 {% if backups | length > 0 %}
 - Backups:
 {% for servicio in backups %}
+{% if servicios_catalogo[servicio].domain_prefix is defined %}
     - {{ servicio | replace('-', ' ') | title }}:
         href: http://{{ servicios_catalogo[servicio].domain_prefix }}.{{ cliente_subdomain }}.lab.local
         description: Copias de seguridad
         icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
 {% endfor %}
 {% endif %}
 
 {% if monitorizacion | length > 0 %}
 - Monitorización:
 {% for servicio in monitorizacion %}
+{% if servicios_catalogo[servicio].domain_prefix is defined %}
     - {{ servicio | replace('-', ' ') | title }}:
         href: http://{{ servicios_catalogo[servicio].domain_prefix }}.{{ cliente_subdomain }}.lab.local
         description: Monitorización de servicios
         icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
 {% endfor %}
 {% endif %}
 
 {% if infraestructura | length > 0 %}
 - Infraestructura:
 {% for servicio in infraestructura %}
+{% if servicios_catalogo[servicio].domain_prefix is defined %}
     - {{ servicio | replace('-', ' ') | title }}:
         href: http://{{ servicios_catalogo[servicio].domain_prefix }}.{{ cliente_subdomain }}.lab.local
         description: Servicio interno de infraestructura
         icon: {{ servicios_catalogo[servicio].icon | default("docker") }}
+{% endif %}
 {% endfor %}
 {% endif %}

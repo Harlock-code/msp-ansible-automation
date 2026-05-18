@@ -76,6 +76,29 @@
       changed_when: "'ok' in dns_records_result.content"
       delegate_to: localhost
 
+    - name: Eliminar registros DNS ausentes en Technitium
+      uri:
+        url: "{{ technitium_url }}/api/zones/records/delete"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          token: "{{ technitium_token }}"
+          domain: "{{ item.domain }}"
+          zone: "{{ item.zone }}"
+          type: "A"
+          ipAddress: "{{ cliente_ip }}"
+        return_content: true
+      loop: "{{ dns_records_absent | default([]) }}"
+      register: dns_delete_result
+      failed_when: false
+      changed_when: "'ok' in dns_delete_result.content"
+      delegate_to: localhost
+
+    - name: Mostrar DNS eliminados
+      debug:
+        msg: "DNS eliminado -> {{ item.item.domain }}"
+      loop: "{{ dns_delete_result.results | default([]) }}"
+
     - name: Mostrar resultado DNS
       debug:
         msg: "DNS configurado -> {{ item.item.name }}.{{ item.item.zone }} -> {{ item.item.ip }}"
