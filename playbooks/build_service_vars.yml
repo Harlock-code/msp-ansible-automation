@@ -4,6 +4,81 @@
   gather_facts: false
 
   tasks:
+
+    - name: Inicializar cliente_servicios generados desde flags
+      set_fact:
+        generated_cliente_servicios: []
+
+    - name: Añadir nginx-test si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['nginx-test'] }}"
+      when: apps.nginx_test | default(false)
+
+    - name: Añadir portainer-agent si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['portainer-agent'] }}"
+      when: apps.portainer_agent | default(false)
+
+    - name: Añadir vaultwarden si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['vaultwarden'] }}"
+      when: apps.vaultwarden | default(false)
+
+    - name: Añadir uptime-kuma si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['uptime-kuma'] }}"
+      when: apps.uptime_kuma | default(false)
+
+    - name: Añadir technitium si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['technitium'] }}"
+      when: apps.technitium | default(false)
+
+    - name: Añadir nextcloud si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['nextcloud'] }}"
+      when: apps.nextcloud | default(false)
+
+    - name: Añadir duplicati si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['duplicati'] }}"
+      when: apps.duplicati | default(false)
+
+    - name: Añadir homepage si está activado
+      set_fact:
+        generated_cliente_servicios: "{{ generated_cliente_servicios + ['homepage'] }}"
+      when: apps.homepage | default(false)
+
+    - name: Usar cliente_servicios generados desde flags
+      set_fact:
+        cliente_servicios: "{{ generated_cliente_servicios }}"
+
+    - name: Inicializar docker_stacks generados
+      set_fact:
+        generated_docker_stacks: []
+
+    - name: Generar docker_stacks desde cliente_servicios
+      set_fact:
+        generated_docker_stacks: "{{ generated_docker_stacks + [item] }}"
+      loop: "{{ cliente_servicios }}"
+      when:
+        - servicios_catalogo[item] is defined
+
+    - name: Mostrar docker_stacks generados
+      debug:
+        var: generated_docker_stacks
+
+    - name: Generar deploy_repositories automático
+      set_fact:
+        generated_deploy_repositories:
+          - repo_name: "msp-docker-apps"
+            repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
+            docker_stacks: "{{ generated_docker_stacks }}"
+
+    - name: Mostrar deploy_repositories generados
+      debug:
+        var: generated_deploy_repositories
+
     - name: Inicializar proxy_hosts generados
       set_fact:
         proxy_hosts: []

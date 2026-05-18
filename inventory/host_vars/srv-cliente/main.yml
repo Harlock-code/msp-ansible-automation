@@ -4,8 +4,23 @@ cliente_dominio: "cliente.lab.local"
 
 cliente_ip: "192.168.56.60"
 
-cliente_servicios:
-  - nginx-test
+
+core_services:
+  reverse_proxy: false
+  dns: false
+  homepage: false
+  monitoring: false
+  backup: false
+
+apps:
+  nginx_test: true
+  portainer_agent: true
+  vaultwarden: true
+  uptime_kuma: true
+  technitium: true
+  nextcloud: true
+  duplicati: true
+  homepage: true
 
 cliente_monitoring: true
 cliente_backup: true

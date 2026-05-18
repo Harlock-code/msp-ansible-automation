@@ -1,4 +1,6 @@
 ---
+- import_playbook: build_service_vars.yml
+
 - name: Deploy MSP client services
   hosts: clientes
   become: true

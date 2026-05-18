@@ -24,6 +24,7 @@ servicios_catalogo:
     internal_only: true
 
   homepage:
+    repo: msp-docker-apps
     domain_prefix: "home"
     forward_host: "homepage"
     forward_port: 3000
@@ -31,6 +32,7 @@ servicios_catalogo:
     icon: "homepage"
 
   vaultwarden:
+    repo: msp-docker-apps
     domain_prefix: "vault"
     forward_host: "vaultwarden"
     forward_port: 80
@@ -38,6 +40,7 @@ servicios_catalogo:
     icon: "vaultwarden"
 
   uptime-kuma:
+    repo: msp-docker-apps
     domain_prefix: "uptime"
     forward_host: "uptime-kuma"
     forward_port: 3001
@@ -45,6 +48,7 @@ servicios_catalogo:
     icon: "uptime-kuma"
 
   technitium:
+    repo: msp-docker-apps
     domain_prefix: "dns"
     forward_host: "technitium"
     forward_port: 5380
@@ -52,6 +56,7 @@ servicios_catalogo:
     icon: "technitium"
 
   nextcloud:
+    repo: msp-docker-apps
     domain_prefix: "nextcloud"
     forward_host: "nextcloud"
     forward_port: 80
@@ -59,6 +64,7 @@ servicios_catalogo:
     icon: "nextcloud"
 
   duplicati:
+    repo: msp-docker-apps
     domain_prefix: "backup"
     forward_host: "duplicati"
     forward_port: 8200
@@ -66,6 +72,7 @@ servicios_catalogo:
     icon: "duplicati"
 
   nginx-test:
+    repo: msp-docker-apps
     domain_prefix: "nginx"
     forward_host: "nginx-test"
     forward_port: 80
