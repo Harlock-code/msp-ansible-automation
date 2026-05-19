@@ -11,6 +11,7 @@ cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 servicios_catalogo:
 
   portainer-agent:
+    repo: msp-docker-apps
     internal_only: true
 
   nginx-proxy-manager:

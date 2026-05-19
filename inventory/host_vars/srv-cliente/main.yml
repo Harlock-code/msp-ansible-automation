@@ -1,8 +1,8 @@
 cliente_nombre: "cliente"
 cliente_subdomain: "cliente"
-cliente_dominio: "cliente.lab.local"
+cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 
-cliente_ip: "192.168.56.60"
+cliente_ip: "192.168.56.50"
 
 
 core_services:
@@ -14,16 +14,21 @@ core_services:
 
 apps:
   nginx_test: true
-  portainer_agent: false
+  portainer_agent: true
   vaultwarden: true
   uptime_kuma: true
   technitium: true
-  nextcloud: false
+  nextcloud: true
   duplicati: false
-  homepage: false
 
 apps_absent_manage:
   - nextcloud
+  - homepage
+  - vaultwarden
+  - uptime_kuma
+  - technitium
+  - duplicati
+  - portainer_agent
 
 
 cliente_monitoring: true

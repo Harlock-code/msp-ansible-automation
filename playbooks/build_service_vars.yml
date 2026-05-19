@@ -130,12 +130,12 @@
 
     - name: Build absent apps list
       set_fact:
-        absent_services: "{{ absent_services | default([]) + [item.key] }}"
+        absent_services: "{{ absent_services | default([]) + [ item.key | replace('_', '-') ] }}"
       loop: "{{ apps | dict2items }}"
       when:
         - item.value is boolean
         - item.value == false
-        - item.key in servicios_catalogo
+        - item.key | replace('_', '-') in servicios_catalogo
         - item.key in apps_absent_manage | default([])
 
     - name: Build absent core services list

@@ -1,6 +1,6 @@
 ---
 - name: Crear directorio local de certificados PKI
-  file:
+  ansible.builtin.file:
     path: "/opt/msp-pki"
     state: directory
     mode: "0755"
@@ -8,67 +8,62 @@
   run_once: true
   become: false
 
-- name: Crear clave privada para cada servicio
-  command: >
+- name: Crear clave privada wildcard del cliente
+  ansible.builtin.command: >
     openssl genrsa
-    -out /opt/msp-pki/{{ item.key_file }}
+    -out /opt/msp-pki/wildcard.{{ cliente_dominio }}.key
     2048
   args:
-    creates: "/opt/msp-pki/{{ item.key_file }}"
-  loop: "{{ proxy_hosts }}"
+    creates: "/opt/msp-pki/wildcard.{{ cliente_dominio }}.key"
   delegate_to: localhost
   become: false
 
-- name: Crear CSR para cada servicio
-  command: >
+- name: Crear archivo OpenSSL SAN para wildcard
+  ansible.builtin.copy:
+    dest: "/opt/msp-pki/wildcard.{{ cliente_dominio }}.cnf"
+    mode: "0644"
+    content: |
+      [req]
+      distinguished_name = req_distinguished_name
+      req_extensions = v3_req
+      prompt = no
+
+      [req_distinguished_name]
+      CN = *.{{ cliente_dominio }}
+
+      [v3_req]
+      subjectAltName = @alt_names
+
+      [alt_names]
+      DNS.1 = *.{{ cliente_dominio }}
+      DNS.2 = {{ cliente_dominio }}
+  delegate_to: localhost
+  become: false
+
+- name: Crear CSR wildcard del cliente
+  ansible.builtin.command: >
     openssl req -new
-    -key /opt/msp-pki/{{ item.key_file }}
-    -out /opt/msp-pki/{{ item.domain }}.csr
-    -subj "/CN={{ item.domain }}"
+    -key /opt/msp-pki/wildcard.{{ cliente_dominio }}.key
+    -out /opt/msp-pki/wildcard.{{ cliente_dominio }}.csr
+    -config /opt/msp-pki/wildcard.{{ cliente_dominio }}.cnf
   args:
-    creates: "/opt/msp-pki/{{ item.domain }}.csr"
-  loop: "{{ proxy_hosts }}"
+    creates: "/opt/msp-pki/wildcard.{{ cliente_dominio }}.csr"
   delegate_to: localhost
   become: false
 
-- name: Crear certificado firmado por CA local para cada servicio
-  command: >
+- name: Crear certificado wildcard firmado por CA local
+  ansible.builtin.command: >
     openssl x509 -req
-    -in /opt/msp-pki/{{ item.domain }}.csr
+    -in /opt/msp-pki/wildcard.{{ cliente_dominio }}.csr
     -CA /opt/msp-pki/msp-root-ca.crt
     -CAkey /opt/msp-pki/msp-root-ca.key
     -CAcreateserial
-    -out /opt/msp-pki/{{ item.cert_file }}
+    -out /opt/msp-pki/wildcard.{{ cliente_dominio }}.crt
     -days 825
     -sha256
+    -extensions v3_req
+    -extfile /opt/msp-pki/wildcard.{{ cliente_dominio }}.cnf
   args:
-    creates: "/opt/msp-pki/{{ item.cert_file }}"
-  loop: "{{ proxy_hosts }}"
+    creates: "/opt/msp-pki/wildcard.{{ cliente_dominio }}.crt"
   delegate_to: localhost
   become: false
-
-- name: Crear directorio SSL personalizado para NPM
-  file:
-    path: /opt/data/nginx-proxy-manager/custom_ssl
-    state: directory
-    owner: javi
-    group: javi
-    mode: "0755"
-
-- name: Copiar certificados públicos de servicios al cliente
-  copy:
-    src: "/opt/msp-pki/{{ item.cert_file }}"
-    dest: "/opt/data/nginx-proxy-manager/custom_ssl/{{ item.cert_file }}"
-    owner: javi
-    group: javi
-    mode: "0644"
-  loop: "{{ proxy_hosts }}"
-
-- name: Copiar claves privadas de servicios al cliente
-  copy:
-    src: "/opt/msp-pki/{{ item.key_file }}"
-    dest: "/opt/data/nginx-proxy-manager/custom_ssl/{{ item.key_file }}"
-    owner: javi
-    group: javi
-    mode: "0600"
-  loop: "{{ proxy_hosts }}"

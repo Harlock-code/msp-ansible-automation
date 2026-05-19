@@ -17,6 +17,10 @@
       tags: homepage
       when: core_services.homepage | default(false)
 
+    - role: pki
+      tags: pki
+      when: core_services.reverse_proxy | default(false)
+
     - role: reverse_proxy
       tags: reverse_proxy
       when: core_services.reverse_proxy | default(false)

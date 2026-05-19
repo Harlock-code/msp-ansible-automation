@@ -3,6 +3,18 @@
   hosts: all
   become: true
 
+  vars:
+    deploy_repositories:
+      - repo_name: "msp-docker-infrastructure"
+        repo_url: "git@github.com:Harlock-code/msp-docker-infrastructure.git"
+        docker_stacks:
+          - nginx-proxy-manager
+
+      - repo_name: "msp-docker-apps"
+        repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
+        docker_stacks:
+          - technitium
+
   roles:
     - role: common
       tags: common
@@ -13,9 +25,5 @@
     - role: docker_engine
       tags: docker_engine
 
-    - role: monitoring
-      tags: monitoring
-
     - role: docker_stack
       tags: docker_stack
-

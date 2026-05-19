@@ -27,15 +27,22 @@
 
     - name: Login en Technitium DNS
       uri:
-        url: "{{ technitium_url }}/api/user/login"
+        url: "http://{{ ansible_host }}:5380/api/user/login"
         method: POST
         body_format: form-urlencoded
         body:
           user: "{{ technitium_username }}"
           pass: "{{ technitium_password }}"
-        return_content: true
+        return_content: yes
+        status_code: 200
       register: technitium_login
       delegate_to: localhost
+      retries: 20
+      delay: 5
+      until:
+        - technitium_login.json is defined
+        - technitium_login.json.status == "ok"
+        - technitium_login.json.token is defined
 
     - name: Guardar token Technitium
       set_fact:

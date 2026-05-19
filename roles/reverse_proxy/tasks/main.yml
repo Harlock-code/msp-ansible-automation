@@ -5,16 +5,114 @@
     method: POST
     body_format: json
     body:
-      identity: "{{ vault_npm_admin_email }}"
-      secret: "{{ vault_npm_admin_password }}"
-    return_content: true
+      identity: "{{ npm_email }}"
+      secret: "{{ npm_password }}"
     status_code: 200
+    return_content: true
   register: npm_auth
+  retries: 5
+  delay: 3
+  until:
+    - npm_auth.json is defined
+    - npm_auth.json.token is defined
   no_log: true
 
 - name: Show NPM auth status
   ansible.builtin.debug:
     msg: "Authenticated against Nginx Proxy Manager API"
+
+- name: Get existing certificates from NPM
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    return_content: true
+    status_code: 200
+  register: npm_existing_certs
+  no_log: true
+
+- name: Create wildcard certificate in NPM if missing
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
+    method: POST
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    body_format: json
+    body:
+      provider: "other"
+      nice_name: "wildcard-{{ cliente_dominio }}"
+    status_code: 201
+    return_content: true
+  when: >
+    ('wildcard-' ~ cliente_dominio) not in
+    (npm_existing_certs.json | map(attribute='nice_name') | list)
+  register: npm_wildcard_created
+  no_log: true
+
+
+- name: Refresh certificates from NPM
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    return_content: true
+    status_code: 200
+  register: npm_all_certs
+  no_log: true
+
+- name: Refresh certificates after wildcard creation
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    return_content: true
+    status_code: 200
+  register: npm_all_certs
+  no_log: true
+
+- name: Set wildcard certificate ID
+  ansible.builtin.set_fact:
+    npm_wildcard_cert_id: >-
+      {{
+        (
+          npm_all_certs.json
+          | selectattr('nice_name', 'equalto', 'wildcard-' ~ cliente_dominio)
+          | map(attribute='id')
+          | first
+        ) | default(0)
+      }}
+
+- name: Upload wildcard certificate and key
+  ansible.builtin.command: >
+    curl -s -X POST "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates/{{
+      (
+        npm_all_certs.json
+        | selectattr('nice_name', 'equalto', 'wildcard-' ~ cliente_dominio)
+        | list
+      )[0].id
+    }}/upload"
+    -H "Authorization: Bearer {{ npm_auth.json.token }}"
+    -F "certificate=@/opt/msp-pki/wildcard.{{ cliente_dominio }}.crt"
+    -F "certificate_key=@/opt/msp-pki/wildcard.{{ cliente_dominio }}.key"
+  when: npm_wildcard_created is defined
+  delegate_to: localhost
+  become: false
+  changed_when: true
+  no_log: false
+
+- name: Refresh certificates after upload
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
+    method: GET
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    return_content: true
+    status_code: 200
+  register: npm_all_certs
+  no_log: true
 
 - name: Get existing proxy hosts
   ansible.builtin.uri:
@@ -49,6 +147,47 @@
     - npm_proxy_hosts_absent is defined
     - item.domain in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
 
+- name: Update existing proxy hosts with SSL certificate
+  ansible.builtin.uri:
+    url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts/{{ item_id }}"
+    method: PUT
+    headers:
+      Authorization: "Bearer {{ npm_auth.json.token }}"
+    body_format: json
+    body:
+      domain_names:
+        - "{{ item.domain }}"
+      forward_scheme: "{{ item.scheme | default('http') }}"
+      forward_host: "{{ item.forward_host }}"
+      forward_port: "{{ item.forward_port }}"
+      access_list_id: 0
+      certificate_id: "{{ npm_wildcard_cert_id }}"
+      ssl_forced: true
+      caching_enabled: "{{ item.caching_enabled | default(false) }}"
+      block_exploits: "{{ item.block_exploits | default(true) }}"
+      allow_websocket_upgrade: "{{ item.websocket | default(true) }}"
+      http2_support: true
+      hsts_enabled: "{{ item.hsts_enabled | default(false) }}"
+      hsts_subdomains: "{{ item.hsts_subdomains | default(false) }}"
+      locations: []
+      advanced_config: "{{ item.advanced_config | default('') }}"
+      meta: {}
+    status_code: 200
+  vars:
+    item_id: >-
+      {{
+        (
+          npm_proxy_hosts.json
+          | selectattr('domain_names', 'contains', item.domain)
+          | map(attribute='id')
+          | first
+        )
+      }}
+  loop: "{{ proxy_hosts }}"
+  when:
+    - item.domain in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
+    - npm_wildcard_cert_id | int > 0
+
 - name: Create proxy hosts
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts"
@@ -63,8 +202,8 @@
       forward_host: "{{ item.forward_host }}"
       forward_port: "{{ item.forward_port }}"
       access_list_id: 0
-      certificate_id: "{{ item.certificate_id | default(0) }}"
-      ssl_forced: "{{ item.ssl_forced | default(false) }}"
+      certificate_id: "{{ npm_wildcard_cert_id }}"
+      ssl_forced: true
       caching_enabled: "{{ item.caching_enabled | default(false) }}"
       block_exploits: "{{ item.block_exploits | default(true) }}"
       allow_websocket_upgrade: "{{ item.websocket | default(true) }}"
@@ -75,5 +214,7 @@
       advanced_config: "{{ item.advanced_config | default('') }}"
       meta: {}
     status_code: 201
-  loop: "{{ npm_proxy_hosts_desired }}"
-  when: item.domain not in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
+  loop: "{{ proxy_hosts }}"
+  when:
+    - npm_wildcard_cert_id | int > 0
+    - item.domain not in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
