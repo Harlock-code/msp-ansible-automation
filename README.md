@@ -32,7 +32,7 @@ Este proyecto automatiza el despliegue, configuración y gestión del ciclo de v
 ---
 ## ⚙️ Arquitectura y flujo de automatización
 
-![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/architecture-diagram.png?raw=true)
+![architecture]([https://github.com/Harlock-code/msp-ansible-automation/blob/main/architecture-diagram.png?raw=true](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Diagrama_Ansible.png?raw=true))
 
 # ⚙️ Flujo de automatización
 
