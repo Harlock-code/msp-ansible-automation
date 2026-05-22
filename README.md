@@ -135,12 +135,6 @@ templates/
 
 ---
 
-## Thechnitium
-
-![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Dirama_Ansible.png?raw=true)
-
----
-
 # 📜 Licencia
 
 Proyecto orientado a aprendizaje, automatización e infraestructura self-hosted.
