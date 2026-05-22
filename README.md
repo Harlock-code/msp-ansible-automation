@@ -1,247 +1,143 @@
-# MSP Ansible Automation
+# MSP / DevOps Lab — Automatización con Ansible
 
-## Overview
+![banner](https://github.com/Harlock-code/Harlock-code/blob/main/banner_javi.png?raw=true)
 
-This project is part of a self-hosted MSP / DevOps infrastructure lab focused on Infrastructure as Code, automation, Docker orchestration and reusable deployments.
+## 📌 Descripción
 
-The objective of this repository is to automate the provisioning and management of Docker hosts using Ansible, integrating GitHub-based Docker Compose deployments and reusable infrastructure components.
+Plataforma de automatización orientada a entornos MSP/DevOps utilizando:
 
----
+- Ansible
+- Docker
+- Proxmox
+- DNS dinámico
+- Reverse Proxy
+- Infrastructure as Code
 
-# Main Goals
-
-* Automate Docker host provisioning
-* Apply reusable baseline security configurations
-* Deploy Docker stacks automatically from GitHub repositories
-* Centralize infrastructure management
-* Build reusable Infrastructure as Code workflows
-* Simulate real MSP / DevOps deployment methodologies
+Este proyecto automatiza el despliegue, configuración y gestión del ciclo de vida de servicios self-hosted de forma modular y reutilizable.
 
 ---
 
-# Infrastructure Architecture
+# 🚀 Características principales
 
-## Hypervisor
-
-* Proxmox VE
-
-## Main Infrastructure
-
-| Host            | Role                                |
-| --------------- | ----------------------------------- |
-| srv-ansible     | Central automation server           |
-| srv-docker-main | Core infrastructure services        |
-| srv-docker-apps | Customer applications               |
-| srv-test-docker | Provisioning and deployment testing |
+- ✔ Despliegue automático de Docker
+- ✔ Integración automática con DNS
+- ✔ Configuración automática de Nginx Proxy Manager
+- ✔ SSL wildcard interno
+- ✔ Homepage dinámica
+- ✔ Infraestructura declarativa mediante YAML
+- ✔ Eliminación automática de servicios
+- ✔ Arquitectura modular
+- ✔ Workflows reutilizables
 
 ---
 
-# Technologies Used
-
-* Ansible
-* Docker Engine
-* Docker Compose
-* GitHub
-* Ubuntu Server 24.04
-* SSH Key Authentication
-* UFW
-* Fail2ban
-
----
-
-# Repository Structure
+# ⚙️ Flujo de automatización
 
 ```text
-ansible/
-├── ansible.cfg
-├── inventory/
-│   ├── hosts.ini
-│   └── group_vars/
-│       ├── docker_main/
-│       └── docker_test/
-├── playbooks/
-├── roles/
-└── site.yml
+host_vars/main.yml
+        ↓
+Ansible Playbook
+        ↓
+Docker Compose
+        ↓
+DNS Automation
+        ↓
+Reverse Proxy
+        ↓
+SSL Integration
+        ↓
+Homepage Update
 ```
 
 ---
 
-# Inventory Management
-
-Infrastructure hosts are managed through Ansible inventory groups.
-
-Example:
-
-```ini
-[docker_main]
-srv-docker-main ansible_host=192.168.56.31
-
-[docker_test]
-srv-test-docker ansible_host=192.168.56.50
-```
-
----
-
-# Variable Management
-
-Environment-specific variables are separated using `group_vars`.
-
-Example:
+# 🧩 Ejemplo de configuración
 
 ```yaml
-repo_name: msp-docker-infrastructure
-repo_url: https://github.com/Harlock-code/msp-docker-infrastructure.git
-
-docker_stacks:
-  - nginx-proxy-manager
-  - homepage
-  - uptime-kuma
+apps:
+  nextcloud: true
+  vaultwarden: true
+  uptime_kuma: true
 ```
 
-This allows reusable deployments across multiple environments and clients.
+Los servicios pueden activarse o eliminarse automáticamente modificando variables YAML.
+
+Ejemplo:
+
+```yaml
+nextcloud: false
+```
+
+Tras ejecutar el playbook, la infraestructura se sincroniza automáticamente:
+
+- Docker stacks
+- Registros DNS
+- Proxy Hosts
+- SSL
+- Homepage
 
 ---
 
-# Implemented Roles
-
-## common
-
-Applies baseline package installation:
-
-* curl
-* git
-* htop
-* vim
-* networking tools
-
----
-
-## security
-
-Applies basic Linux hardening:
-
-* UFW firewall
-* SSH allow rules
-* HTTP/HTTPS allow rules
-* Fail2ban
-
----
-
-## docker_engine
-
-Automates Docker installation:
-
-* Docker Engine
-* Docker Compose Plugin
-* containerd
-* Docker service enablement
-
----
-
-## docker_stack
-
-Reusable Docker deployment role.
-
-Features:
-
-* Git repository cloning
-* `.env.example` handling
-* Multi-stack deployment
-* Automated `docker compose up -d`
-
----
-
-# Automated Workflow
-
-## Provisioning Flow
+# 📂 Estructura del proyecto
 
 ```text
-Ubuntu Template
-        ↓
-Ansible Provisioning
-        ↓
-Docker Installation
-        ↓
-GitHub Repository Clone
-        ↓
-Docker Stack Deployment
-        ↓
-Operational Infrastructure
+playbooks/
+roles/
+inventory/
+group_vars/
+host_vars/
+templates/
 ```
 
 ---
 
-# GitHub Integration
+# 🖥️ Tecnologías utilizadas
 
-The project integrates directly with GitHub repositories:
-
-| Repository                | Purpose                     |
-| ------------------------- | --------------------------- |
-| msp-docker-infrastructure | Core infrastructure stacks  |
-| msp-docker-apps           | Customer application stacks |
-| msp-ansible-automation    | Infrastructure automation   |
-
----
-
-# Infrastructure as Code Philosophy
-
-This project follows Infrastructure as Code principles:
-
-* Reusable configurations
-* Automated provisioning
-* Version-controlled infrastructure
-* Reproducible deployments
-* Modular architecture
-
-The infrastructure is rebuilt from code instead of relying on manually configured servers.
+- Ansible
+- Docker
+- Docker Compose
+- Linux
+- Proxmox VE
+- Nginx Proxy Manager
+- Technitium DNS
+- Homepage
+- WireGuard
+- Grafana
+- Prometheus
+- Loki
 
 ---
 
-# Current Features
+# 🎯 Objetivos actuales
 
-Implemented capabilities include:
-
-* Multi-host orchestration
-* SSH key authentication
-* Baseline hardening
-* Docker provisioning
-* GitHub-based deployments
-* Multi-stack Docker deployment
-* Environment separation using variables
-* Modular reusable roles
+- Terraform + automatización de Proxmox
+- GitOps workflows
+- Observabilidad centralizada
+- Multi-environment deployments
+- Automatización MSP avanzada
 
 ---
 
-# Future Roadmap
+# 📸 Capturas
 
-Planned future improvements:
+## Homepage
 
-* Prometheus
-* Grafana
-* Loki
-* Authentik
-* CI/CD integration
-* GitOps workflows
-* Automated backups
-* Monitoring automation
-* Multi-client environment support
+(Añadir captura)
 
 ---
 
-# Learning Objectives
+## Nginx Proxy Manager
 
-This lab was designed to improve practical skills in:
-
-* DevOps methodologies
-* Docker automation
-* Infrastructure as Code
-* Linux administration
-* Git workflows
-* MSP-oriented infrastructure management
-* Automation and orchestration
+(Añadir captura)
 
 ---
 
-# Author
+## Deploy automatizado
 
-Harlock-code
+(Añadir captura)
+
+---
+
+# 📜 Licencia
+
+Proyecto orientado a aprendizaje, automatización e infraestructura self-hosted.
