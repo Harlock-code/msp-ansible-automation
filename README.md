@@ -125,7 +125,7 @@ templates/
 
 ## Homepage
 
-![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Diagra_Ansible.png?raw=true)
+![architecture](https://github.com/Harlock-code/msp-docker-infrastructure/blob/main/screenshots/home.png?raw=true)
 
 ---
 
