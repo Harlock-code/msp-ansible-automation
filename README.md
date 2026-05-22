@@ -1,6 +1,7 @@
 # MSP / DevOps Lab — Automatización con Ansible
 
 ![banner](https://github.com/Harlock-code/Harlock-code/blob/main/banner_javi.png?raw=true)
+
 ![Ansible](https://img.shields.io/badge/Ansible-Automation-red?style=for-the-badge&logo=ansible)
 ![Docker](https://img.shields.io/badge/Docker-Containers-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Proxmox](https://img.shields.io/badge/Proxmox-Virtualization-E57000?style=for-the-badge&logo=proxmox)
