@@ -131,7 +131,7 @@ templates/
 
 ## Nginx Proxy Manager
 
-![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Diagrama_sible.png?raw=true)
+![architecture](https://github.com/Harlock-code/msp-docker-infrastructure/blob/main/screenshots/npm.png?raw=true)
 
 ---
 
