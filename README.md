@@ -30,6 +30,9 @@ Este proyecto automatiza el despliegue, configuración y gestión del ciclo de v
 - ✔ Workflows reutilizables
 
 ---
+## ⚙️ Arquitectura y flujo de automatización
+
+![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/architecture-diagram.png?raw=true)
 
 # ⚙️ Flujo de automatización
 
