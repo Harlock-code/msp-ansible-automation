@@ -162,7 +162,7 @@
       forward_port: "{{ item.forward_port }}"
       access_list_id: 0
       certificate_id: "{{ npm_wildcard_cert_id }}"
-      ssl_forced: true
+      ssl_forced: "{{ item.ssl_forced | default(true) }}"
       caching_enabled: "{{ item.caching_enabled | default(false) }}"
       block_exploits: "{{ item.block_exploits | default(true) }}"
       allow_websocket_upgrade: "{{ item.websocket | default(true) }}"
@@ -203,11 +203,11 @@
       forward_port: "{{ item.forward_port }}"
       access_list_id: 0
       certificate_id: "{{ npm_wildcard_cert_id }}"
-      ssl_forced: true
+      ssl_forced: "{{ item.ssl_forced | default(true) }}"
       caching_enabled: "{{ item.caching_enabled | default(false) }}"
       block_exploits: "{{ item.block_exploits | default(true) }}"
       allow_websocket_upgrade: "{{ item.websocket | default(true) }}"
-      http2_support: "{{ item.http2_support | default(false) }}"
+      http2_support: "{{ item.http2_support | default(true) }}"
       hsts_enabled: "{{ item.hsts_enabled | default(false) }}"
       hsts_subdomains: "{{ item.hsts_subdomains | default(false) }}"
       locations: []
