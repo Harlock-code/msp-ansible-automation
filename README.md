@@ -125,19 +125,19 @@ templates/
 
 ## Homepage
 
-(Añadir captura)
+![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Diagra_Ansible.png?raw=true)
 
 ---
 
 ## Nginx Proxy Manager
 
-(Añadir captura)
+![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Diagrama_sible.png?raw=true)
 
 ---
 
 ## Deploy automatizado
 
-(Añadir captura)
+![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Dirama_Ansible.png?raw=true)
 
 ---
 
