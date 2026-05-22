@@ -135,7 +135,7 @@ templates/
 
 ---
 
-## Deploy automatizado
+## Thechnitium
 
 ![architecture](https://github.com/Harlock-code/msp-ansible-automation/blob/main/Dirama_Ansible.png?raw=true)
 
