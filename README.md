@@ -61,7 +61,9 @@ SSL Integration
         ↓
 Homepage Update
 ```
+## 🎬 Demo
 
+![demo](https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true)
 ---
 
 # 🧩 Ejemplo de configuración
