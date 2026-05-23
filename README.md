@@ -62,18 +62,9 @@ SSL Integration
         ↓
 Homepage Update
 
-## 🎬 Demo - Desisntalacion automatizada de Nextcloud.
+🎬 Demo - Automatic Nextcloud Removal
+![Demo]
 
-![DemoGiff]((https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true).
----
-
-# 🧩 Configuration Example
-
-```yaml
-apps:
-  nextcloud: true
-  vaultwarden: true
-  uptime_kuma: true
 ```
 
 Services can be automatically enabled or removed by modifying YAML variables.
