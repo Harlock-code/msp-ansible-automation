@@ -64,8 +64,7 @@ Homepage Update
 
 ## 🎬 Demo - Desisntalacion automatizada de Nextcloud.
 
-![demo](https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true).
-
+![DemoGiff]((https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true).
 ---
 
 # 🧩 Configuration Example
