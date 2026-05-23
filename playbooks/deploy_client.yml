@@ -1,15 +1,23 @@
+# EN: Build dynamic service variables before deployment
+# ES: Construir variables dinámicas de servicios antes del despliegue
 ---
 - import_playbook: build_service_vars.yml
 
+# EN: Deploy MSP client services
+# ES: Desplegar servicios del cliente MSP
 - name: Deploy MSP client services
   hosts: clientes
   become: true
 
   roles:
 
+    # EN: Remove disabled Docker stacks
+    # ES: Eliminar stacks Docker desactivados
     - role: docker_stack_absent
       tags: docker_stack_absent
 
+    # EN: Deploy enabled Docker stacks
+    # ES: Desplegar stacks Docker activados
     - role: docker_stack
       tags: docker_stack
 
@@ -25,4 +33,6 @@
       tags: reverse_proxy
       when: core_services.reverse_proxy | default(false)
 
+# EN: Configure DNS records after service deployment
+# ES: Configurar registros DNS después del despliegue
 - import_playbook: setup_dns.yml
