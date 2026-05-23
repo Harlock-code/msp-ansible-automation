@@ -61,11 +61,11 @@ Reverse Proxy
 SSL Integration
         ↓
 Homepage Update
----
+```
 🎬 Demo - Automatic Nextcloud Removal
 ![Demo](https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true).
 
-```
+
 
 Services can be automatically enabled or removed by modifying YAML variables.
 
