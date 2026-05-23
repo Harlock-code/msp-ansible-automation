@@ -5,6 +5,8 @@ set -e
 CLIENT_NAME="$1"
 CLIENT_IP="$2"
 
+# EN: Validate required script arguments
+# ES: Validar argumentos obligatorios del script
 if [ -z "$CLIENT_NAME" ] || [ -z "$CLIENT_IP" ]; then
   echo "Uso: $0 <cliente_nombre> <cliente_ip>"
   echo "Ejemplo: $0 cliente2 192.168.56.60"
@@ -20,8 +22,12 @@ echo "[+] Creando cliente: ${CLIENT_NAME}"
 echo "[+] Hostname Ansible: ${HOSTNAME}"
 echo "[+] IP: ${CLIENT_IP}"
 
+# EN: Create host_vars directory for the new client
+# ES: Crear directorio host_vars para el nuevo cliente
 mkdir -p "$HOST_VARS_DIR"
 
+# EN: Add client host to Ansible inventory if missing
+# ES: Añadir cliente al inventario Ansible si no existe
 if ! grep -q "^${HOSTNAME} " "$INVENTORY_FILE"; then
   echo "${HOSTNAME} ansible_host=${CLIENT_IP}" >> "$INVENTORY_FILE"
   echo "[+] Añadido ${HOSTNAME} al inventory"
@@ -29,6 +35,8 @@ else
   echo "[!] ${HOSTNAME} ya existe en inventory"
 fi
 
+# EN: Generate client variables file
+# ES: Generar archivo de variables del cliente
 cat > "$HOST_VARS_FILE" <<EOF
 ---
 cliente_nombre: "${CLIENT_NAME}"
