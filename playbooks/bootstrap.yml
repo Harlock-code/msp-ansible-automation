@@ -1,9 +1,15 @@
+# EN: Main playbook for Docker host bootstrap
+# ES: Playbook principal para bootstrap de hosts Docker
+
 ---
 - name: Bootstrap Docker Host
   hosts: all
   become: true
 
   vars:
+
+    # EN: Git repositories and stacks deployed automatically
+    # ES: Repositorios Git y stacks desplegados automáticamente
     deploy_repositories:
       - repo_name: "msp-docker-infrastructure"
         repo_url: "git@github.com:Harlock-code/msp-docker-infrastructure.git"
@@ -15,6 +21,8 @@
         docker_stacks:
           - technitium
 
+  # EN: Modular infrastructure roles
+  # ES: Roles modulares de infraestructura
   roles:
     - role: common
       tags: common
