@@ -1,8 +1,13 @@
+# EN: Verify Docker installation
+# ES: Verificar instalación de Docker
+
 ---
 - name: Check Docker version
   command: docker --version
   changed_when: false
 
+# EN: Check running Docker containers
+# ES: Verificar contenedores Docker en ejecución
 - name: Check running containers
   command: docker ps
   changed_when: false
