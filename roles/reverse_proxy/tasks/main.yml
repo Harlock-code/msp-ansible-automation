@@ -1,4 +1,9 @@
+# EN: Configure Nginx Proxy Manager automatically
+# ES: Configurar Nginx Proxy Manager automáticamente
+
 ---
+# EN: Authenticate against NPM API
+# ES: Autenticarse contra la API de NPM
 - name: Authenticate against Nginx Proxy Manager API
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/tokens"
@@ -21,6 +26,8 @@
   ansible.builtin.debug:
     msg: "Authenticated against Nginx Proxy Manager API"
 
+# EN: Retrieve existing SSL certificates
+# ES: Obtener certificados SSL existentes
 - name: Get existing certificates from NPM
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
@@ -32,6 +39,8 @@
   register: npm_existing_certs
   no_log: true
 
+# EN: Create wildcard certificate entry if missing
+# ES: Crear entrada de certificado wildcard si no existe
 - name: Create wildcard certificate in NPM if missing
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
@@ -50,7 +59,8 @@
   register: npm_wildcard_created
   no_log: true
 
-
+# EN: Refresh certificates list
+# ES: Actualizar lista de certificados
 - name: Refresh certificates from NPM
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates"
@@ -73,6 +83,8 @@
   register: npm_all_certs
   no_log: true
 
+# EN: Save wildcard certificate ID
+# ES: Guardar ID del certificado wildcard
 - name: Set wildcard certificate ID
   ansible.builtin.set_fact:
     npm_wildcard_cert_id: >-
@@ -85,6 +97,8 @@
         ) | default(0)
       }}
 
+# EN: Upload wildcard certificate and private key
+# ES: Subir certificado wildcard y clave privada
 - name: Upload wildcard certificate and key
   ansible.builtin.command: >
     curl -s -X POST "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/certificates/{{
@@ -114,6 +128,8 @@
   register: npm_all_certs
   no_log: true
 
+# EN: Retrieve existing proxy hosts
+# ES: Obtener proxy hosts existentes
 - name: Get existing proxy hosts
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts"
@@ -125,6 +141,8 @@
   register: npm_proxy_hosts
   no_log: true
 
+# EN: Remove proxy hosts for disabled services
+# ES: Eliminar proxy hosts de servicios desactivados
 - name: Delete absent proxy hosts from NPM
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts/{{ item_id }}"
@@ -147,6 +165,8 @@
     - npm_proxy_hosts_absent is defined
     - item.domain in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
 
+# EN: Update existing proxy hosts with SSL
+# ES: Actualizar proxy hosts existentes con SSL
 - name: Update existing proxy hosts with SSL certificate
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts/{{ item_id }}"
@@ -188,6 +208,8 @@
     - item.domain in (npm_proxy_hosts.json | map(attribute='domain_names') | flatten | list)
     - npm_wildcard_cert_id | int > 0
 
+# EN: Create missing proxy hosts
+# ES: Crear proxy hosts faltantes
 - name: Create proxy hosts
   ansible.builtin.uri:
     url: "http://{{ ansible_host }}:{{ npm_api_port | default(81) }}/api/nginx/proxy-hosts"
