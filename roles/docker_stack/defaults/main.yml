@@ -1,4 +1,10 @@
+# EN: Docker stack deployment configuration
+# ES: Configuración de despliegue del stack Docker
+
 ---
 stack_name: nginx-test
+
+# EN: Source Git repository
+# ES: Repositorio Git origen
 repo_name: msp-docker-apps
 repo_url: https://github.com/Harlock-code/msp-docker-apps.git
