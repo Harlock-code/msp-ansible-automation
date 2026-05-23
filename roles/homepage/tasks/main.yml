@@ -1,15 +1,24 @@
+# EN: Configure Homepage dashboard automatically
+# ES: Configurar dashboard Homepage automáticamente
+
 ---
+# EN: Ensure Homepage configuration directory exists
+# ES: Asegurar que exista el directorio de configuración de Homepage
 - name: Ensure Homepage config directory exists
   file:
     path: /opt/data/homepage/config
     state: directory
     mode: '0755'
 
+# EN: Generate Homepage services configuration from template
+# ES: Generar configuración de servicios Homepage desde plantilla
 - name: Generate Homepage services config
   template:
     src: services.yaml.j2
     dest: /opt/data/homepage/config/services.yaml
     mode: '0644'
 
+# EN: Restart Homepage container to apply changes
+# ES: Reiniciar contenedor Homepage para aplicar cambios
 - name: Restart Homepage container
   shell: docker restart homepage || true
