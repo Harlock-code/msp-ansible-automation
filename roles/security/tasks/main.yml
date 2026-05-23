@@ -1,33 +1,48 @@
+# EN: Basic Linux security hardening
+# ES: Hardening básico de seguridad Linux
+
 ---
+# EN: Install Fail2ban intrusion prevention
+# ES: Instalar protección anti-intrusión Fail2ban
 - name: Install fail2ban
   apt:
     name: fail2ban
     state: present
     update_cache: yes
 
+# EN: Install UFW firewall
+# ES: Instalar firewall UFW
 - name: Install UFW
   apt:
     name: ufw
     state: present
 
+# EN: Allow SSH traffic
+# ES: Permitir tráfico SSH
 - name: Allow SSH
   ufw:
     rule: allow
     port: "22"
     proto: tcp
 
+# EN: Allow HTTP traffic
+# ES: Permitir tráfico HTTP
 - name: Allow HTTP
   ufw:
     rule: allow
     port: "80"
     proto: tcp
 
+# EN: Allow HTTPS traffic
+# ES: Permitir tráfico HTTPS
 - name: Allow HTTPS
   ufw:
     rule: allow
     port: "443"
     proto: tcp
 
+# EN: Enable firewall with deny-by-default policy
+# ES: Activar firewall con política deny por defecto
 - name: Enable UFW
   ufw:
     state: enabled
