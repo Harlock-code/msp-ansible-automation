@@ -1,3 +1,6 @@
+# EN: Initial bootstrap for MSP client access
+# ES: Bootstrap inicial para acceso de cliente MSP
+
 ---
 - name: Bootstrap inicial de acceso para cliente MSP
   hosts: clientes
@@ -5,15 +8,24 @@
   gather_facts: false
 
   vars:
+
+    # EN: Administrative user created by Ansible
+    # ES: Usuario administrador creado por Ansible
     ansible_admin_user: "javi"
 
   pre_tasks:
+
+    # EN: Install Python if missing
+    # ES: Instalar Python si no existe
     - name: Instalar Python si no existe
       raw: |
         test -e /usr/bin/python3 || (apt update && apt install -y python3)
       changed_when: false
 
   tasks:
+
+    # EN: Install required base packages
+    # ES: Instalar paquetes base necesarios
     - name: Instalar paquetes base mínimos
       apt:
         name:
@@ -26,6 +38,8 @@
         state: present
         update_cache: yes
 
+    # EN: Create administrative user
+    # ES: Crear usuario administrador
     - name: Crear usuario administrador
       user:
         name: "{{ ansible_admin_user }}"
@@ -34,6 +48,8 @@
         append: true
         create_home: true
 
+    # EN: Allow passwordless sudo
+    # ES: Permitir sudo sin contraseña
     - name: Permitir sudo sin contraseña para usuario admin
       copy:
         dest: "/etc/sudoers.d/{{ ansible_admin_user }}"
@@ -42,6 +58,8 @@
         group: root
         mode: "0440"
 
+    # EN: Create SSH directory for admin user
+    # ES: Crear directorio SSH para usuario admin
     - name: Crear directorio .ssh del usuario admin
       file:
         path: "/home/{{ ansible_admin_user }}/.ssh"
@@ -50,12 +68,16 @@
         group: "{{ ansible_admin_user }}"
         mode: "0700"
 
+    # EN: Install Ansible public SSH key
+    # ES: Instalar clave pública SSH de Ansible
     - name: Instalar clave pública de Ansible
       authorized_key:
         user: "{{ ansible_admin_user }}"
         state: present
         key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
 
+    # EN: Ensure SSH service is running
+    # ES: Asegurar que SSH esté activo
     - name: Asegurar SSH activo
       service:
         name: ssh
