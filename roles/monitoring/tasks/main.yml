@@ -1,3 +1,6 @@
+# EN: Create required monitoring directories
+# ES: Crear directorios necesarios para monitorización
+
 ---
 - name: Create monitoring directories
   file:
@@ -13,6 +16,8 @@
     - /opt/data/monitoring/loki/data
     - /opt/data/monitoring/promtail
 
+# EN: Render monitoring service configuration files
+# ES: Generar archivos de configuración de monitorización
 - name: Render Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
@@ -37,6 +42,8 @@
     group: javi
     mode: '0644'
 
+# EN: Set container-specific data permissions
+# ES: Establecer permisos de datos específicos por contenedor
 - name: Set Grafana permissions
   file:
     path: /opt/data/monitoring/grafana
@@ -58,6 +65,8 @@
     group: nogroup
     recurse: yes
 
+# EN: Render environment files only on main Docker node
+# ES: Generar archivos de entorno solo en el nodo Docker principal
 - name: Render Homepage env file
   ansible.builtin.template:
     src: homepage.env.j2
@@ -76,6 +85,8 @@
     mode: '0600'
   when: inventory_hostname == "srv-docker-main"
 
+# EN: Provision Grafana alerting configuration
+# ES: Aprovisionar configuración de alertas en Grafana
 - name: Ensure Grafana alerting provisioning directory exists
   ansible.builtin.file:
     path: /opt/repos/msp-docker-infrastructure/monitoring/grafana/provisioning/alerting
