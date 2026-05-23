@@ -1,14 +1,23 @@
+# EN: Deploy Docker stacks from Git repositories
+# ES: Desplegar stacks Docker desde repositorios Git
+
 ---
+# EN: Use dynamically generated repositories if available
+# ES: Usar repositorios generados dinámicamente si existen
 - name: Definir repositories activas
   set_fact:
     active_deploy_repositories: "{{ generated_deploy_repositories | default(deploy_repositories) }}"
 
+# EN: Ensure repositories directory exists
+# ES: Asegurar que exista el directorio de repositorios
 - name: Ensure repos directory exists
   file:
     path: /opt/repos
     state: directory
     mode: '0755'
 
+# EN: Synchronize repositories from Ansible controller
+# ES: Sincronizar repositorios desde el controlador Ansible
 - name: Copy repositories from Ansible controller to client
   synchronize:
     src: "{{ playbook_dir }}/../{{ item.repo_name }}/"
@@ -20,12 +29,16 @@
   delegate_to: localhost
   become: false
 
+# EN: Check if .env.example exists
+# ES: Verificar si existe .env.example
 - name: Check if .env.example exists
   stat:
     path: "/opt/repos/{{ item.0.repo_name }}/{{ item.1 }}/.env.example"
   loop: "{{ active_deploy_repositories | subelements('docker_stacks', skip_missing=True) }}"
   register: env_example_files
 
+# EN: Generate .env file automatically
+# ES: Generar archivo .env automáticamente
 - name: Copy env example to .env when exists
   copy:
     src: "{{ item.stat.path }}"
@@ -35,6 +48,8 @@
   loop: "{{ env_example_files.results }}"
   when: item.stat.exists
 
+# EN: Ensure external Docker networks exist
+# ES: Asegurar que existan redes Docker externas
 - name: Ensure proxy_net exists
   shell: docker network create proxy_net || true
 
@@ -44,6 +59,8 @@
 - name: Ensure backend_net exists
   shell: docker network create backend_net || true
 
+# EN: Deploy Docker stacks using Docker Compose
+# ES: Desplegar stacks Docker usando Docker Compose
 - name: Deploy Docker stacks
   shell: |
     docker compose up -d
