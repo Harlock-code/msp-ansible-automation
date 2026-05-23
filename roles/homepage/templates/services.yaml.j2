@@ -1,3 +1,6 @@
+{# EN: Categorize services for Homepage dashboard
+   ES: Categorizar servicios para el dashboard Homepage #}
+
 {% set productividad = cliente_servicios | select('in', ['nextcloud', 'vaultwarden']) | list %}
 {% set backups = cliente_servicios | select('in', ['duplicati']) | list %}
 {% set monitorizacion = cliente_servicios | select('in', ['uptime-kuma']) | list %}
