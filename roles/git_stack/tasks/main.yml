@@ -1,16 +1,25 @@
+# EN: Install and deploy Docker apps repository
+# ES: Instalar y desplegar repositorio de aplicaciones Docker
+
 ---
+# EN: Install Git package
+# ES: Instalar paquete Git
 - name: Install git
   apt:
     name: git
     state: present
     update_cache: yes
 
+# EN: Create repository storage directory
+# ES: Crear directorio para almacenar repositorios
 - name: Create repos directory
   file:
     path: /opt/repos
     state: directory
     mode: '0755'
 
+# EN: Clone Docker apps repository
+# ES: Clonar repositorio de aplicaciones Docker
 - name: Clone docker apps repository
   git:
     repo: "https://github.com/Harlock-code/msp-docker-apps.git"
@@ -19,6 +28,8 @@
     force: yes
     accept_hostkey: yes
 
+# EN: Deploy nginx-test stack using Docker Compose
+# ES: Desplegar stack nginx-test usando Docker Compose
 - name: Deploy nginx test from GitHub repo
   shell: |
     docker compose up -d
