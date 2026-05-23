@@ -1,3 +1,6 @@
+# EN: Generate dynamic MSP service variables
+# ES: Generar variables dinámicas de servicios MSP
+
 ---
 - name: Generar variables dinámicas de servicios MSP
   hosts: clientes
@@ -5,6 +8,8 @@
 
   tasks:
 
+    # EN: Initialize generated services list
+    # ES: Inicializar lista de servicios generados
     - name: Inicializar cliente_servicios generados desde flags
       set_fact:
         generated_cliente_servicios: []
@@ -54,14 +59,20 @@
         generated_cliente_servicios: "{{ generated_cliente_servicios + ['homepage'] }}"
       when: core_services.homepage | default(false)
 
+    # EN: Final generated services list
+    # ES: Lista final de servicios generados
     - name: Usar cliente_servicios generados desde flags
       set_fact:
         cliente_servicios: "{{ generated_cliente_servicios }}"
 
+    # EN: Initialize Docker stacks list
+    # ES: Inicializar lista de stacks Docker
     - name: Inicializar docker_stacks generados
       set_fact:
         generated_docker_stacks: []
 
+    # EN: Build Docker stacks dynamically
+    # ES: Construir stacks Docker dinámicamente
     - name: Generar docker_stacks desde cliente_servicios
       set_fact:
         generated_docker_stacks: "{{ generated_docker_stacks + [item] }}"
@@ -73,6 +84,8 @@
       debug:
         var: generated_docker_stacks
 
+    # EN: Generate repositories automatically
+    # ES: Generar repositorios automáticamente
     - name: Generar deploy_repositories automático
       set_fact:
         generated_deploy_repositories:
@@ -89,14 +102,20 @@
       debug:
         var: generated_deploy_repositories
 
+    # EN: Initialize reverse proxy hosts
+    # ES: Inicializar hosts reverse proxy
     - name: Inicializar proxy_hosts generados
       set_fact:
         proxy_hosts: []
 
+    # EN: Initialize DNS records
+    # ES: Inicializar registros DNS
     - name: Inicializar dns_records generados
       set_fact:
         dns_records: []
 
+    # EN: Generate reverse proxy hosts dynamically
+    # ES: Generar hosts reverse proxy dinámicamente
     - name: Generar proxy_hosts desde cliente_servicios
       set_fact:
         proxy_hosts: "{{ proxy_hosts + [ {
@@ -116,6 +135,8 @@
       set_fact:
         npm_proxy_hosts_desired: "{{ proxy_hosts }}"
 
+    # EN: Generate DNS records dynamically
+    # ES: Generar registros DNS dinámicamente
     - name: Generar dns_records desde cliente_servicios
       set_fact:
         dns_records: "{{ dns_records + [ {
@@ -128,6 +149,8 @@
         - servicios_catalogo[item] is defined
         - servicios_catalogo[item].internal_only | default(false) == false
 
+    # EN: Build absent services list
+    # ES: Construir lista de servicios ausentes
     - name: Build absent apps list
       set_fact:
         absent_services: "{{ absent_services | default([]) + [ item.key | replace('_', '-') ] }}"
@@ -151,10 +174,14 @@
       debug:
         var: absent_services
 
+    # EN: Initialize absent reverse proxy hosts
+    # ES: Inicializar hosts reverse proxy ausentes
     - name: Inicializar npm_proxy_hosts_absent
       set_fact:
         npm_proxy_hosts_absent: []
 
+    # EN: Generate reverse proxy hosts to remove
+    # ES: Generar hosts reverse proxy a eliminar
     - name: Generar npm_proxy_hosts_absent desde absent_services
       set_fact:
         npm_proxy_hosts_absent: >-
@@ -176,10 +203,14 @@
       debug:
         var: npm_proxy_hosts_absent
 
+    # EN: Initialize absent DNS records
+    # ES: Inicializar registros DNS ausentes
     - name: Inicializar dns_records_absent
       set_fact:
         dns_records_absent: []
 
+    # EN: Generate DNS records to remove
+    # ES: Generar registros DNS a eliminar
     - name: Generar dns_records_absent desde absent_services
       set_fact:
         dns_records_absent: >-
@@ -210,4 +241,3 @@
     - name: Mostrar dns_records generados
       debug:
         var: dns_records
-
