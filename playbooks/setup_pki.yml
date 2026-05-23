@@ -1,3 +1,6 @@
+# EN: Configure internal MSP PKI on client hosts
+# ES: Configurar PKI interna MSP en hosts cliente
+
 ---
 - name: Configurar PKI interna MSP en cliente
   hosts: clientes
