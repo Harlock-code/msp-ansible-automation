@@ -1,8 +1,13 @@
+# EN: Update apt package cache
+# ES: Actualizar caché de paquetes apt
+
 ---
 - name: Update apt cache
   apt:
     update_cache: yes
 
+# EN: Install common administration tools
+# ES: Instalar herramientas comunes de administración
 - name: Install base admin packages
   apt:
     name:
