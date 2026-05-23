@@ -1,4 +1,6 @@
 ---
+# EN: Repositories and Docker stacks deployed automatically
+# ES: Repositorios y stacks Docker desplegados automáticamente
 deploy_repositories:
   - repo_name: "{{ repositories.infrastructure.name }}"
     repo_url: "{{ repositories.infrastructure.url }}"
@@ -10,21 +12,33 @@ deploy_repositories:
       - node-exporter
       - cadvisor
 
+# EN: Homepage configuration
+# ES: Configuración de Homepage
 homepage_port: 3000
 homepage_config_path: /opt/data/homepage/config
 
+# EN: Prometheus scrape interval
+# ES: Intervalo de scrape de Prometheus
 prometheus_scrape_interval: 15s
 
+# EN: Node Exporter port
+# ES: Puerto de Node Exporter
 node_exporter_port: 9100
 
+# EN: cAdvisor configuration
+# ES: Configuración de cAdvisor
 cadvisor_port: 8088
 cadvisor_scrape_interval: 30s
 cadvisor_scrape_timeout: 25s
 
+# EN: Promtail configuration
+# ES: Configuración de Promtail
 promtail_http_port: 9080
 promtail_positions_file: /tmp/positions.yaml
 promtail_log_path: /var/log/*.log
 
+# EN: Loki configuration
+# ES: Configuración de Loki
 loki_container_name: loki
 loki_port: 3100
 
@@ -48,8 +62,12 @@ loki_schema_version: v13
 loki_index_prefix: index_
 loki_index_period: 24h
 
+# EN: NPM API port
+# ES: Puerto API de NPM
 npm_api_port: 81
 
+# EN: Desired reverse proxy hosts
+# ES: Hosts reverse proxy deseados
 npm_proxy_hosts_desired:
 
   - domain: home.lab.local
