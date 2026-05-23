@@ -61,3 +61,95 @@ Reverse Proxy
 SSL Integration
         ↓
 Homepage Update
+
+## 🎬 Demo - Desisntalacion automatizada de Nextcloud.
+
+![demo](https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true)
+
+---
+
+# 🧩 Configuration Example
+
+```yaml
+apps:
+  nextcloud: true
+  vaultwarden: true
+  uptime_kuma: true
+```
+
+Services can be automatically enabled or removed by modifying YAML variables.
+
+Example:
+
+```yaml
+nextcloud: false
+```
+
+After running the playbook, the infrastructure automatically synchronizes:
+
+- Docker stacks
+- Registros DNS
+- Proxy Hosts
+- SSL
+- Homepage
+
+---
+
+# 📂 Project Structure
+
+```text
+playbooks/
+roles/
+inventory/
+group_vars/
+host_vars/
+templates/
+```
+
+---
+
+# 🖥️ Technologies Used
+
+- Ansible
+- Docker
+- Docker Compose
+- Linux
+- Proxmox VE
+- Nginx Proxy Manager
+- Technitium DNS
+- Homepage
+- WireGuard
+- Grafana
+- Prometheus
+- Loki
+
+---
+
+# 🎯 Current Goals
+
+- Terraform + automatización de Proxmox
+- GitOps workflows
+- Observabilidad centralizada
+- Multi-environment deployments
+- Automatización MSP avanzada
+
+---
+
+# 📸 Screenshots
+
+## Homepage
+
+![architecture](https://github.com/Harlock-code/msp-docker-infrastructure/blob/main/screenshots/home.png?raw=true)
+
+---
+
+## Nginx Proxy Manager
+
+![architecture](https://github.com/Harlock-code/msp-docker-infrastructure/blob/main/screenshots/npm.png?raw=true)
+
+---
+
+# 📜 License
+
+Project focused on learning, automation, and self-hosted infrastructure.
+
