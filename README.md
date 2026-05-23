@@ -63,7 +63,7 @@ SSL Integration
 Homepage Update
 
 🎬 Demo - Automatic Nextcloud Removal
-![Demo]
+![Demo](https://github.com/Harlock-code/msp-ansible-automation/blob/main/deplygiff.gif?raw=true).
 
 ```
 
