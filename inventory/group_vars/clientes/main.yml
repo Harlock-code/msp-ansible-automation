@@ -1,13 +1,21 @@
+# EN: General timezone for deployed services
+# ES: Zona horaria general para los servicios desplegados
 timezone: "Europe/Madrid"
 
+# EN: Base path where Docker stacks are deployed
+# ES: Ruta base donde se despliegan los stacks Docker
 docker_base_path: "/opt/stacks"
 
 monitoring_enabled: true
 
+# EN: Client domain configuration
+# ES: Configuración de dominio del cliente
 cliente_nombre: "cliente"
 cliente_subdomain: "cliente"
 cliente_dominio: "{{ cliente_subdomain }}.lab.local"
 
+# EN: Service catalog used by Ansible automation
+# ES: Catálogo de servicios usado por la automatización Ansible
 servicios_catalogo:
 
   portainer-agent:
@@ -78,15 +86,21 @@ servicios_catalogo:
     cert_name: "nginx-cliente-lab"
     icon: "nginx"
 
+# EN: Git repositories deployed automatically
+# ES: Repositorios Git desplegados automáticamente
 deploy_repositories:
   - repo_name: "msp-docker-apps"
     repo_url: "git@github.com:Harlock-code/msp-docker-apps.git"
 
+# EN: External Docker networks
+# ES: Redes Docker externas
 docker_networks:
   - proxy_net
   - monitoring_net
   - backend_net
 
+# EN: Client service endpoints
+# ES: Endpoints de servicios del cliente
 cliente_ip: "192.168.56.60"
 cliente_npm_port: 81
 cliente_dns_port: 5380
@@ -100,4 +114,3 @@ dns_provider: "technitium"
 technitium_url: "http://{{ cliente_ip }}:{{ cliente_dns_port }}"
 technitium_username: "admin"
 technitium_password: "Template.47"
-
