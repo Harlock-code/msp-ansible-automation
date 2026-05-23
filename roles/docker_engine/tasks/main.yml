@@ -1,3 +1,6 @@
+# EN: Install Docker required packages
+# ES: Instalar paquetes necesarios para Docker
+
 ---
 - name: Install Docker dependencies
   apt:
@@ -8,12 +11,16 @@
     state: present
     update_cache: yes
 
+# EN: Create Docker GPG key directory
+# ES: Crear directorio para claves GPG de Docker
 - name: Create Docker keyring directory
   file:
     path: /etc/apt/keyrings
     state: directory
     mode: '0755'
 
+# EN: Add official Docker GPG key
+# ES: Añadir clave GPG oficial de Docker
 - name: Add Docker GPG key
   shell: |
     curl -fsSL https://download.docker.com/linux/debian/gpg | \
@@ -21,6 +28,8 @@
   args:
     creates: /etc/apt/keyrings/docker.gpg
 
+# EN: Add official Docker repository
+# ES: Añadir repositorio oficial de Docker
 - name: Add Docker repository
   shell: |
     echo \
@@ -36,6 +45,8 @@
   apt:
     update_cache: yes
 
+# EN: Install Docker Engine and plugins
+# ES: Instalar Docker Engine y plugins
 - name: Install Docker Engine
   apt:
     name:
@@ -46,12 +57,16 @@
       - docker-compose-plugin
     state: present
 
+# EN: Ensure Docker service is running
+# ES: Asegurar que Docker esté activo
 - name: Ensure Docker service is enabled
   systemd:
     name: docker
     enabled: true
     state: started
 
+# EN: Allow user to run Docker without sudo
+# ES: Permitir usar Docker sin sudo
 - name: Add user to docker group
   user:
     name: javi
